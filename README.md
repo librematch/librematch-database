@@ -2,6 +2,16 @@
 
 Migrations for the Libre:Match Database
 
+<!-- TODO RELEASE
+## Open source data
+
+Database dumps can be queried from the `https://api.librematch.org/v1/dumps` endpoint. 
+
+A new database dump is generated every first day of the month at ~4 AM UTC time for the month.
+
+In case you will use the data, please mention the source (Relic Link API and Libre:Match) and give us a shoutout, thank you!
+-->
+
 ## Development
 
 `librematch_dev.sqlite3` is the database that can be used for local development of the `collector` and other components.
