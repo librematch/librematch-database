@@ -9,7 +9,7 @@ CREATE TABLE "matches" (
     "finished_dt" DATETIME,
     "started_ts" INTEGER,
     "finished_ts" INTEGER,
-    "location" INTEGER,
+    "map_id" INTEGER,
     "map_size" SMALLINT,
     "match_settings" TEXT NOT NULL,
     "rematch" BOOLEAN DEFAULT FALSE NOT NULL,

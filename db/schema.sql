@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS "matches" (
     "finished_dt" DATETIME,
     "started_ts" INTEGER,
     "finished_ts" INTEGER,
-    "location" INTEGER,
+    "map_id" INTEGER,
     "map_size" SMALLINT,
     "match_settings" TEXT NOT NULL,
     "rematch" BOOLEAN DEFAULT FALSE NOT NULL,
@@ -210,9 +210,85 @@ CREATE TABLE IF NOT EXISTS "ratings_ledger" (
 CREATE TABLE IF NOT EXISTS "leaderboards" (
     "ulid" TEXT(26) NOT NULL,
     "leaderboard_id" INTEGER NOT NULL,
-    "game" SMALLINT NOT NULL, -- 0=aoe1de, 1=aoe2de, 2=aoe3de, 3=aoe4
+    "game_ulid_ref" TEXT(26) NOT NULL,
     "name" TEXT NOT NULL,
-    PRIMARY KEY ("ulid", "game")
+    PRIMARY KEY ("ulid", "game_ulid_ref"),
+    CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid")
+);
+CREATE TABLE IF NOT EXISTS "database_dumps" (
+	"ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "game_ulid_ref" TEXT(26) NOT NULL,
+	"timestamp_dt" DATETIME NOT NULL,
+	"type" INTEGER NOT NULL,
+	"uploaded_at_dt" DATETIME NOT NULL,
+	"size" INTEGER NOT NULL,
+	"item_count" INTEGER NOT NULL,
+	"storage_url" TEXT NOT NULL,
+    CONSTRAINT "database_dumps_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid")
+);
+CREATE INDEX "database_dumps_timestamp_dt_IDX" ON "database_dumps" ("timestamp_dt");
+CREATE INDEX "database_dumps_uploaded_at_dt_IDX" ON "database_dumps" ("uploaded_at_dt");
+CREATE TABLE IF NOT EXISTS "games" (
+    "ulid" TEXT(26) NOT NULL,
+	"short_name" TEXT(8) NOT NULL,
+	"long_name" TEXT(255) NOT NULL,
+	"release_date" DATETIME NOT NULL,
+	"steam_url" TEXT NOT NULL,
+	"microsoft_url" TEXT NOT NULL,
+    PRIMARY KEY ("ulid", "short_name")
+);
+CREATE TABLE IF NOT EXISTS "game_definitions" (
+    "ulid" TEXT(26) NOT NULL,
+    "game_ulid_ref" TEXT(26) NOT NULL,
+    -- TODO
+    PRIMARY KEY ("ulid", "game_ulid_ref"),
+    CONSTRAINT "game_definitions_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid")
+);
+CREATE TABLE IF NOT EXISTS "community_resources" (
+    "ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "url" TEXT NOT NULL,
+    "https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
+    "description" TEXT(255),
+    "aoezone_id" TEXT(255),
+    "email_address" TEXT,
+    "discord_id" TEXT,
+    "discord_server_invite" TEXT,
+    "contact_form" BOOLEAN DEFAULT FALSE NOT NULL,
+    "github_id" TEXT
+    -- TODO: game_ulid_ref
+);
+CREATE TABLE IF NOT EXISTS "tournaments" (
+    "ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "short" TEXT(10),
+    "liquipedia_url" TEXT,
+    "liquipedia_tier" SMALLINT,
+    "start_dt" DATETIME,
+    "end_dt" DATETIME,
+    "prizepool" FLOAT,
+    "player_amount" INTEGER,
+    "location" TEXT
+    -- TODO: Add more table columns
+);
+CREATE TABLE IF NOT EXISTS "statistics" (
+	"ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "game_ulid_ref" TEXT(26),
+    "leaderboards_ulid_ref" TEXT(26),
+	"timestamp_dt" DATETIME NOT NULL,
+    "interval_days" INTEGER,
+    "playerbase_size" INTEGER,
+    -- TODO: Check how the values of different intervals fit in here
+	CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
+	CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
+);
+CREATE INDEX "statistics_timestamp_dt_IDX" ON "statistics" ("timestamp_dt");
+CREATE INDEX "statistics_game_ulid_ref_IDX" ON "statistics" ("game_ulid_ref");
+CREATE INDEX "statistics_leaderboards_ulid_ref_IDX" ON "statistics" ("leaderboards_ulid_ref");
+CREATE TABLE IF NOT EXISTS "community_resources_categories" (
+    "ulid" TEXT(26) NOT NULL,
+    "display_text" TEXT NOT NULL,
+    "description" TEXT,
+    PRIMARY KEY ("ulid", "display_text")
 );
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
@@ -231,4 +307,11 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20221020090810'),
   ('20221020091624'),
   ('20221020093601'),
-  ('20221020095052');
+  ('20221020095052'),
+  ('20221020151117'),
+  ('20221020151258'),
+  ('20221020152846'),
+  ('20221020152930'),
+  ('20221020153039'),
+  ('20221020172045'),
+  ('20221020180409');

@@ -2,9 +2,10 @@
 CREATE TABLE "leaderboards" (
     "ulid" TEXT(26) NOT NULL,
     "leaderboard_id" INTEGER NOT NULL,
-    "game" SMALLINT NOT NULL, -- 0=aoe1de, 1=aoe2de, 2=aoe3de, 3=aoe4
+    "game_ulid_ref" TEXT(26) NOT NULL,
     "name" TEXT NOT NULL,
-    PRIMARY KEY ("ulid", "game")
+    PRIMARY KEY ("ulid", "game_ulid_ref"),
+    CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid")
 );
 
 -- migrate:down
