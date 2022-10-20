@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS "components_settings" (
     "value" TEXT NOT NULL,
     CONSTRAINT "components_settings_components_ulid_ref_fkey" FOREIGN KEY ("components_ulid_ref") REFERENCES "components" ("ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
+CREATE UNIQUE INDEX "components_settings_keys_IDX" ON "components_settings" ("components_ulid_ref", "key");
 CREATE TABLE IF NOT EXISTS "components" (
     "ulid" TEXT(26) NOT NULL,
     "component_name" TEXT NOT NULL,
@@ -290,6 +291,14 @@ CREATE TABLE IF NOT EXISTS "community_resources_categories" (
     "description" TEXT,
     PRIMARY KEY ("ulid", "display_text")
 );
+CREATE TABLE IF NOT EXISTS "community_resources_categories_relations" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "com_res_categories_ulid_ref" TEXT(26) NOT NULL,
+    "com_res_ulid_ref" TEXT(26) NOT NULL,
+    FOREIGN KEY ("com_res_categories_ulid_ref") REFERENCES "community_resources_categories" ("ulid"),
+    FOREIGN KEY ("com_res_ulid_ref") REFERENCES "community_resources" ("ulid")
+);
+CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "community_resources_categories_relations" ("com_res_categories_ulid_ref", "com_res_ulid_ref");
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
   ('20221019185730'),
@@ -314,4 +323,5 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20221020152930'),
   ('20221020153039'),
   ('20221020172045'),
-  ('20221020180409');
+  ('20221020180409'),
+  ('20221020233715');
