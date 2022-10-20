@@ -76,10 +76,13 @@ CREATE TABLE IF NOT EXISTS "teams_profiles_relations" (
 	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"teams_ulid_ref" TEXT(26) NOT NULL,
 	"profiles_ulid_ref" TEXT(26) NOT NULL,
-    FOREIGN KEY ("teams_ulid_ref") REFERENCES teams ("ulid"),
-    FOREIGN KEY ("profiles_ulid_ref") REFERENCES profiles ("ulid")
+	"games_ulid_ref" TEXT(26) NOT NULL,
+    FOREIGN KEY ("teams_ulid_ref") REFERENCES "teams" ("ulid"),
+    FOREIGN KEY ("profiles_ulid_ref") REFERENCES "profiles" ("ulid"),
+    FOREIGN KEY ("games_ulid_ref") REFERENCES "games" ("ulid")
 );
 CREATE UNIQUE INDEX teams_profiles_relations_IDX ON teams_profiles_relations ("teams_ulid_ref", "profiles_ulid_ref");
+CREATE INDEX teams_games_relations_IDX ON teams_profiles_relations ("games_ulid_ref");
 CREATE TABLE IF NOT EXISTS "match_settings" (
     "sha256_hash" TEXT NOT NULL PRIMARY KEY,
     "allow_cheats" BOOLEAN,
@@ -295,10 +298,12 @@ CREATE TABLE IF NOT EXISTS "community_resources_categories_relations" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "com_res_categories_ulid_ref" TEXT(26) NOT NULL,
     "com_res_ulid_ref" TEXT(26) NOT NULL,
+    "games_ulid_ref" TEXT(26) NOT NULL,
     FOREIGN KEY ("com_res_categories_ulid_ref") REFERENCES "community_resources_categories" ("ulid"),
     FOREIGN KEY ("com_res_ulid_ref") REFERENCES "community_resources" ("ulid")
+    FOREIGN KEY ("games_ulid_ref") REFERENCES "games" ("ulid")
 );
-CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "community_resources_categories_relations" ("com_res_categories_ulid_ref", "com_res_ulid_ref");
+CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "community_resources_categories_relations" ("com_res_categories_ulid_ref", "com_res_ulid_ref", "games_ulid_ref");
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
   ('20221019185730'),
