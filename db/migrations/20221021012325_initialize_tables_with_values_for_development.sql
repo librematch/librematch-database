@@ -1,4 +1,5 @@
 -- migrate:up
+-- games table
 INSERT INTO "games" VALUES (
 	"01GFW0Y21VQ5RVWQC12P1TCMF2",
 	"aoe1de",
