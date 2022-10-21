@@ -36,4 +36,4 @@ INSERT INTO "games" VALUES (
 );
 
 -- migrate:down
--- do nothing, table gets dropped
+delete from "games"; -- remove all entries from table
