@@ -6,7 +6,7 @@ CREATE TABLE "users" (
 	"rate_limit_unit" INTEGER DEFAULT 0, -- 0=minute, 1=hour, 2=day, 3=month
 	"rate_limit_active" INTEGER DEFAULT 1 NOT NULL,
 	PRIMARY KEY ("ulid"),
-	FOREIGN KEY ("profiles_ulid_ref") REFERENCES profiles ("ulid")
+	FOREIGN KEY ("profiles_ulid_ref") REFERENCES "profiles" ("ulid")
 );
 
 -- migrate:down

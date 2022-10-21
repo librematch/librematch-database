@@ -7,7 +7,7 @@ CREATE TABLE "users_api_keys_relations" (
     FOREIGN KEY ("api_key_ref") REFERENCES api_keys ("api_key")
 );
 
-CREATE UNIQUE INDEX users_api_keys_relations_user_ulid_IDX ON "users_api_keys_relations" ("users_ulid_ref","api_key_ref");
+CREATE UNIQUE INDEX "users_api_keys_relations_users_ulid_IDX" ON "users_api_keys_relations" ("users_ulid_ref","api_key_ref");
 
 -- migrate:down
 drop table "users_api_keys_relations";

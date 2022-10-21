@@ -28,9 +28,13 @@ CREATE TABLE "profiles" (
     PRIMARY KEY ("ulid", "profile_id")
 );
 
-CREATE INDEX profiles_steam_id_IDX ON profiles ("steam_id");
-CREATE INDEX profiles_alias_IDX ON profiles ("alias");
-CREATE INDEX profiles_name_IDX ON profiles ("name");
+CREATE INDEX "profiles_steam_id_IDX" ON "profiles" ("steam_id");
+CREATE INDEX "profiles_verified_IDX" ON "profiles" ("verified");
+CREATE INDEX "profiles_main_account_IDX" ON "profiles" ("is_main_account");
+CREATE INDEX "profiles_alias_IDX" ON "profiles" ("alias");
+CREATE INDEX "profiles_name_IDX" ON "profiles" ("name");
+CREATE INDEX "profiles_country_IDX" ON "profiles" ("country_code");
+CREATE INDEX "profiles_last_match_IDX" ON "profiles" ("last_match_dt");
 
 -- migrate:down
 drop table "profiles";

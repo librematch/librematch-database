@@ -10,7 +10,6 @@ CREATE TABLE "match_settings" (
     "lock_speed" BOOLEAN,
     "lock_teams" BOOLEAN,
     "population" SMALLINT,
-    "privacy" BOOLEAN,
     "record_game" BOOLEAN,
     "regicide_mode" SMALLINT,
     "resources" SMALLINT,

@@ -9,8 +9,8 @@ CREATE TABLE "teams_profiles_relations" (
     FOREIGN KEY ("games_ulid_ref") REFERENCES "games" ("ulid")
 );
 
-CREATE UNIQUE INDEX teams_profiles_relations_IDX ON teams_profiles_relations ("teams_ulid_ref", "profiles_ulid_ref");
-CREATE INDEX teams_games_relations_IDX ON teams_profiles_relations ("games_ulid_ref");
+CREATE UNIQUE INDEX "teams_profiles_relations_IDX" ON "teams_profiles_relations" ("teams_ulid_ref", "profiles_ulid_ref");
+CREATE INDEX "teams_games_relations_IDX" ON "teams_profiles_relations" ("games_ulid_ref");
 
 -- migrate:down
 drop table "teams_profiles_relations";
