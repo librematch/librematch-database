@@ -7,7 +7,11 @@ CREATE TABLE "statistics" (
     "interval_days" INTEGER,
     "playerbase_size" INTEGER,
     -- TODO: Check how the values of different intervals fit in here
-    -- TODO: Add more columns
+    -- TODO: Talk to Coolio on Discord
+    -- - interesting might be to make more obvious how many new multiplayers players are there (metric like first game on any leaderboard)
+    --   - we could even chose top5 (activity, rating) from them and make them queryable, to be e.g. greeted on community resources
+    --     - something like "We welcome @<username> as a new multiplayer to our community!"
+    --   - also how many people left the game (metric might be how many _new_ people haven't played the game in 1/1,5/2/3 months)
 	CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
 );
