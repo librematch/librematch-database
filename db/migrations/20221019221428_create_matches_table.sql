@@ -9,11 +9,12 @@ CREATE TABLE "matches" (
     "finished_dt" DATETIME,
     "started_ts" INTEGER,
     "finished_ts" INTEGER,
-    "map_id" INTEGER,
+    "map_id" INTEGER, -- originally "location", changed due to confusion in tournaments
     "map_size" SMALLINT,
     "match_settings_hash_ref" TEXT NOT NULL,
     "privacy" BOOLEAN DEFAULT FALSE NOT NULL,
     "rematch" BOOLEAN DEFAULT FALSE NOT NULL,
+    "patch_version" FLOAT,
     "creator_profile_id" INTEGER,
     PRIMARY KEY ("ulid", "match_id", "leaderboards_ulid_ref"),
     CONSTRAINT "matches_creator_profile_id_fkey" FOREIGN KEY ("creator_profile_id") REFERENCES "profiles" ("profile_id") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -28,6 +29,7 @@ CREATE INDEX "match_same_map_IDX" ON "matches" ("map_id");
 CREATE INDEX "match_privacy_IDX" ON "matches" ("privacy");
 CREATE INDEX "match_same_server_IDX" ON "matches" ("server");
 CREATE INDEX "match_rematch_IDX" ON "matches" ("rematch");
+CREATE INDEX "match_version_IDX" ON "matches" ("version");
 CREATE INDEX "match_same_settings_IDX" ON "matches" ("match_settings_hash_ref");
 
 -- migrate:down

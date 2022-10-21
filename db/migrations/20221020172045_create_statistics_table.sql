@@ -7,6 +7,7 @@ CREATE TABLE "statistics" (
     "interval_days" INTEGER,
     "playerbase_size" INTEGER,
     -- TODO: Check how the values of different intervals fit in here
+    -- TODO: Add more columns
 	CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
 );

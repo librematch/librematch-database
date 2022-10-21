@@ -10,7 +10,6 @@ CREATE TABLE "community_resources" (
     "discord_server_invite" TEXT,
     "contact_form" BOOLEAN DEFAULT FALSE NOT NULL,
     "github_id" TEXT
-    -- TODO: game_ulid_ref
 );
 
 -- migrate:down

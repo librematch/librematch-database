@@ -4,7 +4,7 @@ CREATE TABLE "profile_statistics" (
     -- "game_ulid_ref" TEXT(26), -- REL
     -- "leaderboards_ulid_ref" TEXT(26), -- REL
 	"timestamp_dt" DATETIME NOT NULL,
-    "interval_days" INTEGER,
+    "interval_days" INTEGER
     -- TODO: Talk to Coolio on Discord
     -- IDEAS:
     -- - how many games per week

@@ -6,8 +6,8 @@ CREATE TABLE "match_players" (
     "opponent_profile_id_ref" INTEGER NOT NULL,
     "civ" SMALLINT,
     "slot" SMALLINT NOT NULL,
-    "team_in_matchup" SMALLINT,
-    "color" SMALLINT,
+    "team_in_matchup" SMALLINT, -- just the team, renamed due to confusion with teams (clans) from Liquipedia
+    "colour" SMALLINT,
     "is_ready" BOOLEAN NOT NULL,
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
     "won" BOOLEAN,

@@ -5,4 +5,4 @@ CREATE TABLE "matches_import_pending" (
 );
 
 -- migrate:down
-dropt table "matches_import_pending";
+drop table "matches_import_pending";

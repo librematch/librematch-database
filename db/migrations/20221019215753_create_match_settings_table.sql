@@ -23,6 +23,9 @@ CREATE TABLE "match_settings" (
     "treaty_length" INTEGER,
     "turbo_mode" BOOLEAN,
     "victory_condition" SMALLINT
+    -- MAYBE (for statistics):
+    -- "first_seen" DATETIME,
+    -- "last_seen" DATETIME,
 );
 
 -- migrate:down
