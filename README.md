@@ -16,7 +16,7 @@ In case you will use the data, please mention the source (Relic Link API and Lib
 
 `librematch_dev.sqlite3` is the database that can be used for local development of the `collector` and other components.
 
-## Entity-Relationship diagram (updated at 2022-10-20)
+## Entity-Relationship diagram (updated at 2022-10-21)
 
 ![](./docs/librematch_ER.png)
 
