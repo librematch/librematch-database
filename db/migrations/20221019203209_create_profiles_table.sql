@@ -28,9 +28,10 @@ CREATE TABLE "profiles" (
     "esports_earnings_id" INTEGER,
     "aoe_elo_id" INTEGER,
     "douyu_id" INTEGER,
-    PRIMARY KEY ("ulid", "profile_id")
+    PRIMARY KEY ("ulid")
 );
 
+CREATE UNIQUE INDEX "profiles_profile_id_IDX" ON "profiles" ("profile_id"); -- for lookup from backend, afterwards only ULID
 CREATE INDEX "profiles_steam_id_IDX" ON "profiles" ("steam_id"); -- how many players on each platform
 CREATE INDEX "profiles_requested_privacy_IDX" ON "profiles" ("requested_privacy");
 CREATE INDEX "profiles_is_verified_IDX" ON "profiles" ("is_verified");

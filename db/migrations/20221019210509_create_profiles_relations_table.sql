@@ -1,8 +1,8 @@
 -- migrate:up
 CREATE TABLE "profiles_relations" (
 	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"main_profiles_ulid_ref" TEXT(26) NOT NULL,
-	"secondary_profiles_ulid_ref" TEXT(26) NOT NULL,
+	"main_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
+	"secondary_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
 	"comments" TEXT(255),
     FOREIGN KEY ("main_profiles_ulid_ref") REFERENCES "profiles" ("ulid"),
     FOREIGN KEY ("secondary_profiles_ulid_ref") REFERENCES "profiles" ("ulid")

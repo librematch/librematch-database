@@ -18,6 +18,7 @@ CREATE TABLE "profile_statistics" (
     -- - how much time spent in queue
     -- - percentage of 1v1 vs TG (both ranked)
     -- - tends to pick civ (metric?)
+    -- - "Player X has a YY.Z% winrate vs <civ_x> in <year>/<month> on <map>"
     -- - etc.
 	-- CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	-- CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")

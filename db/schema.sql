@@ -49,8 +49,9 @@ CREATE TABLE IF NOT EXISTS "profiles" (
     "esports_earnings_id" INTEGER,
     "aoe_elo_id" INTEGER,
     "douyu_id" INTEGER,
-    PRIMARY KEY ("ulid", "profile_id")
+    PRIMARY KEY ("ulid")
 );
+CREATE UNIQUE INDEX "profiles_profile_id_IDX" ON "profiles" ("profile_id");
 CREATE INDEX "profiles_steam_id_IDX" ON "profiles" ("steam_id");
 CREATE INDEX "profiles_requested_privacy_IDX" ON "profiles" ("requested_privacy");
 CREATE INDEX "profiles_is_verified_IDX" ON "profiles" ("is_verified");
@@ -62,8 +63,8 @@ CREATE INDEX "profiles_country_IDX" ON "profiles" ("country_code");
 CREATE INDEX "profiles_last_match_IDX" ON "profiles" ("last_match_dt");
 CREATE TABLE IF NOT EXISTS "profiles_relations" (
 	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"main_profiles_ulid_ref" TEXT(26) NOT NULL,
-	"secondary_profiles_ulid_ref" TEXT(26) NOT NULL,
+	"main_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
+	"secondary_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
 	"comments" TEXT(255),
     FOREIGN KEY ("main_profiles_ulid_ref") REFERENCES "profiles" ("ulid"),
     FOREIGN KEY ("secondary_profiles_ulid_ref") REFERENCES "profiles" ("ulid")
@@ -156,20 +157,21 @@ CREATE TABLE IF NOT EXISTS "match_players" (
     "ulid" TEXT(26) NOT NULL,
     "match_id_ref" INTEGER NOT NULL,
     "profile_id_ref" INTEGER NOT NULL,
-    "opponent_profile_id_ref" INTEGER NOT NULL,
+    -- "opponent_profile_id_ref" INTEGER NOT NULL, -- FEATURE: Opponent
     "civ" SMALLINT,
-    "slot" SMALLINT NOT NULL,
+    "slot" SMALLINT NOT NULL, -- TODO: can two players have the same slot? when they have the same colour? archon mode!
     "team_in_matchup" SMALLINT, -- just the team, renamed due to confusion with teams (clans) from Liquipedia
     "colour" SMALLINT,
     "is_ready" BOOLEAN NOT NULL,
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
     "won" BOOLEAN,
     "replay_url" TEXT,
-    PRIMARY KEY ("ulid", "match_id_ref", "profile_id_ref", "slot"),
     CONSTRAINT "match_players_match_id_ref_fkey" FOREIGN KEY ("match_id_ref") REFERENCES "matches" ("match_id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "match_players_profile_id_ref_fkey" FOREIGN KEY ("profile_id_ref") REFERENCES "profiles" ("profile_id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "match_players_opponent_profile_id_ref_fkey" FOREIGN KEY ("opponent_profile_id_ref") REFERENCES "profiles" ("profile_id")
+    -- CONSTRAINT "match_players_opponent_profile_id_ref_fkey" FOREIGN KEY ("opponent_profile_id_ref") REFERENCES "profiles" ("profile_id"),
+    PRIMARY KEY ("ulid")
 );
+CREATE UNIQUE INDEX "match_players_match_id_profile_id_slot_IDX" ON "match_players" ("match_id_ref", "profile_id_ref");
 CREATE INDEX "match_players_match_id_IDX" ON "match_players" ("match_id_ref");
 CREATE INDEX "match_players_profile_id_with_opponent_IDX" ON "match_players" ("profile_id_ref", "opponent_profile_id_ref");
 CREATE INDEX "match_players_civ_IDX" ON "match_players" ("civ");
@@ -197,7 +199,8 @@ CREATE TABLE IF NOT EXISTS "components" (
     "ulid" TEXT(26) NOT NULL,
     "component_name" TEXT NOT NULL,
     "description" TEXT,
-    PRIMARY KEY ("ulid", "component_name")
+    PRIMARY KEY ("ulid"),
+    UNIQUE ("component_name")
 );
 CREATE TABLE IF NOT EXISTS "ratings_ledger" (
     "ulid" TEXT(26) NOT NULL,
@@ -295,7 +298,11 @@ CREATE TABLE IF NOT EXISTS "statistics" (
     "interval_days" INTEGER,
     "playerbase_size" INTEGER,
     -- TODO: Check how the values of different intervals fit in here
-    -- TODO: Add more columns
+    -- TODO: Talk to Coolio on Discord
+    -- - interesting might be to make more obvious how many new multiplayers players are there (metric like first game on any leaderboard)
+    --   - we could even chose top5 (activity, rating) from them and make them queryable, to be e.g. greeted on community resources
+    --     - something like "We welcome @<username> as a new multiplayer to our community!"
+    --   - also how many people left the game (metric might be how many _new_ people haven't played the game in 1/1,5/2/3 months)
 	CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
 );
@@ -337,6 +344,7 @@ CREATE TABLE IF NOT EXISTS "profile_statistics" (
     -- - how much time spent in queue
     -- - percentage of 1v1 vs TG (both ranked)
     -- - tends to pick civ (metric?)
+    -- - "Player X has a YY.Z% winrate vs <civ_x> in <year>/<month> on <map>"
     -- - etc.
 	-- CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	-- CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
