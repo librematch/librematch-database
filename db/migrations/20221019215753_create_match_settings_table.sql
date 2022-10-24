@@ -1,6 +1,7 @@
 -- migrate:up
 CREATE TABLE "match_settings" (
-    "sha256_hash" TEXT NOT NULL PRIMARY KEY,
+    "sha256_hash_id" TEXT NOT NULL PRIMARY KEY, 
+    -- TODO: Is SHA256 reasonable here? too big? does it save space? does it make something better? what problem does it want to solve?
     "allow_cheats" BOOLEAN,
     "difficulty" SMALLINT,
     "empire_wars_mode" BOOLEAN,

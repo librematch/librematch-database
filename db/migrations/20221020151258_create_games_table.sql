@@ -6,8 +6,11 @@ CREATE TABLE "games" (
 	"release_date" DATETIME NOT NULL,
 	"steam_url" TEXT,
 	"microsoft_url" TEXT,
-    PRIMARY KEY ("ulid", "short_name")
+    PRIMARY KEY ("ulid")
 );
+
+CREATE UNIQUE INDEX "games_short_name_IDX" ON "games" ("short_name");
+
 
 -- migrate:down
 drop table "games";
