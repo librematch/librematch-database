@@ -22,7 +22,7 @@ In case you will use the data, please mention the source (Relic Link API and Lib
 
 ## Setup
 
-Install [dbmate](https://github.com/amacneil/dbmate).
+Install [dbmate](https://github.com/amacneil/dbmate#installation).
 
 ## Running Migrations
 
