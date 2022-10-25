@@ -95,7 +95,8 @@ CREATE TABLE IF NOT EXISTS "teams_profiles_relations" (
 CREATE UNIQUE INDEX "teams_profiles_relations_IDX" ON "teams_profiles_relations" ("teams_ulid_ref", "profiles_ulid_ref");
 CREATE INDEX "teams_games_relations_IDX" ON "teams_profiles_relations" ("games_ulid_ref");
 CREATE TABLE IF NOT EXISTS "match_settings" (
-    "sha256_hash" TEXT NOT NULL PRIMARY KEY,
+    "sha256_hash_id" TEXT NOT NULL PRIMARY KEY,
+    -- TODO: Is SHA256 reasonable here? too big? does it save space? does it make something better? what problem does it want to solve?
     "allow_cheats" BOOLEAN,
     "difficulty" SMALLINT,
     "empire_wars_mode" BOOLEAN,
@@ -199,9 +200,9 @@ CREATE TABLE IF NOT EXISTS "components" (
     "ulid" TEXT(26) NOT NULL,
     "component_name" TEXT NOT NULL,
     "description" TEXT,
-    PRIMARY KEY ("ulid"),
-    UNIQUE ("component_name")
+    PRIMARY KEY ("ulid")
 );
+CREATE UNIQUE INDEX "components_component_name_IDX" ON "components" ("component_name");
 CREATE TABLE IF NOT EXISTS "ratings_ledger" (
     "ulid" TEXT(26) NOT NULL,
     "profiles_ulid_ref" TEXT(26) NOT NULL,
@@ -256,15 +257,17 @@ CREATE TABLE IF NOT EXISTS "games" (
 	"release_date" DATETIME NOT NULL,
 	"steam_url" TEXT,
 	"microsoft_url" TEXT,
-    PRIMARY KEY ("ulid", "short_name")
+    PRIMARY KEY ("ulid")
 );
+CREATE UNIQUE INDEX "games_short_name_IDX" ON "games" ("short_name");
 CREATE TABLE IF NOT EXISTS "game_definitions" (
     "ulid" TEXT(26) NOT NULL,
     "game_ulid_ref" TEXT(26) NOT NULL,
     -- TODO
-    PRIMARY KEY ("ulid", "game_ulid_ref"),
+    PRIMARY KEY ("ulid"),
     CONSTRAINT "game_definitions_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid")
 );
+CREATE UNIQUE INDEX "game_definitions_game_ulid_ref_IDX" ON "game_definitions" ("game_ulid_ref");
 CREATE TABLE IF NOT EXISTS "community_resources" (
     "ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "url" TEXT NOT NULL,
@@ -313,8 +316,9 @@ CREATE TABLE IF NOT EXISTS "community_resources_categories" (
     "ulid" TEXT(26) NOT NULL,
     "display_text" TEXT NOT NULL,
     "description" TEXT,
-    PRIMARY KEY ("ulid", "display_text")
+    PRIMARY KEY ("ulid")
 );
+CREATE UNIQUE INDEX "community_resources_categories_display_text_IDX" ON "community_resources_categories" ("display_text");
 CREATE TABLE IF NOT EXISTS "community_resources_categories_relations" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "com_res_ulid_ref" TEXT(26) NOT NULL, -- Community resources

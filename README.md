@@ -40,7 +40,10 @@ Install [dbmate](https://github.com/amacneil/dbmate).
 
 ### Example
 
-`dbmate --url "sqlite:./librematch_dev.sqlite3" up`
+`dbmate up`
+`dbmate down`
+`dbmate drop`
+(by using the `.env` file in the `root-dir` of this repository)
 
 ## License
 
