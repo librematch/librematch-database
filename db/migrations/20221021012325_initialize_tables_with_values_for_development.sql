@@ -36,5 +36,14 @@ INSERT INTO "games" VALUES (
 	"https://www.microsoft.com/store/productId/9N94NCGM1Q2N"
 );
 
+INSERT INTO "games" VALUES (
+	"01GGAB7YPC6M8XV6YZCK4S21E0",
+	"aomr",
+	"Age of Mythology: Retold",
+	"2023-10-30 00:00:00",
+	"still not available for pre-order on Steam",
+	"still not available for pre-order on Microsoft Store"
+);
+
 -- migrate:down
 delete from "games"; -- remove all entries from table
