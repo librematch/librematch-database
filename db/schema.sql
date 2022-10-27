@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS "games" (
     "ulid" TEXT(26) NOT NULL,
 	"short_name" TEXT(8) NOT NULL,
 	"long_name" TEXT(255) NOT NULL,
-	"release_date" DATETIME NOT NULL,
+	"release_date" DATETIME,
 	"steam_url" TEXT,
 	"microsoft_url" TEXT,
     PRIMARY KEY ("ulid")
@@ -353,6 +353,15 @@ CREATE TABLE IF NOT EXISTS "profile_statistics" (
 	-- CONSTRAINT "statistics_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "games" ("ulid"),
 	-- CONSTRAINT "statistics_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid")
 );
+CREATE TABLE IF NOT EXISTS "localizations" (
+    "ulid" TEXT(26) NOT NULL,
+    "lang" TEXT (5) NOT NULL,
+    "updated_at_dt" DATETIME NOT NULL,
+    "ftl-blob" BLOB NOT NULL,
+    PRIMARY KEY ("ulid")
+);
+CREATE UNIQUE INDEX "localizations_lang_IDX" ON "localizations" ("lang");
+CREATE INDEX "localizations_updated_at_dt_IDX" ON "localizations" ("updated_at_dt");
 -- Dbmate schema migrations
 INSERT INTO "schema_migrations" (version) VALUES
   ('20221019185730'),
@@ -380,4 +389,5 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20221020180409'),
   ('20221020233715'),
   ('20221021000721'),
-  ('20221021012325');
+  ('20221021012325'),
+  ('20221025180211');
