@@ -23,8 +23,7 @@ CREATE TABLE "tbl_match_settings" (
     "treaty_length" INTEGER,
     "turbo_mode" BOOLEAN,
     "victory_condition" SMALLINT,
-    UNIQUE (
-        "match_setting_ulid", 
+    UNIQUE ( 
         "allow_cheats",
         "difficulty",
         "empire_wars_mode",
@@ -47,7 +46,7 @@ CREATE TABLE "tbl_match_settings" (
         "treaty_length",
         "turbo_mode",
         "victory_condition"
-    )
+    ) -- FEATURE: STATISTICS FOR COMMON/MOST PLAYED MATCH SETTINGS
 );
 -- TODO: CHECK DATA TYPES FOR PADDING for not wasting space
 
