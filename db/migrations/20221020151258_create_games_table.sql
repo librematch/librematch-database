@@ -5,7 +5,8 @@ CREATE TABLE "tbl_games" (
 	"long_name" TEXT(255) NOT NULL,
 	"release_date" DATETIME,
 	"steam_url" TEXT,
-	"microsoft_url" TEXT
+	"microsoft_url" TEXT,
+	"icon_url" TEXT
 );
 
 -- migrate:down

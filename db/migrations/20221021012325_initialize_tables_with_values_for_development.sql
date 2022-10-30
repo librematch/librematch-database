@@ -7,7 +7,8 @@ VALUES (
 	"Age of Empires: Definitive Edition",
 	"2018-02-20 00:00:00",
 	"https://store.steampowered.com/app/1017900/Age_of_Empires_Definitive_Edition/",
-	"https://www.microsoft.com/store/productId/9NJWTJSVGVLJ"
+	"https://www.microsoft.com/store/productId/9NJWTJSVGVLJ",
+	NULL
 ),
 (
 	"01GFW0YE9H2MRVX4838YK3SA7E",
@@ -15,7 +16,8 @@ VALUES (
 	"Age of Empires II: Definitive Edition",
 	"2019-11-14 00:00:00",
 	"https://store.steampowered.com/app/813780/Age_of_Empires_II_Definitive_Edition/",
-	"https://www.microsoft.com/store/productId/9NJDD0JGPP2Q"
+	"https://www.microsoft.com/store/productId/9NJDD0JGPP2Q",
+	NULL
 ),
 (
 	"01GFW0YPWW6YSPG2QAKT9SGNJF",
@@ -23,7 +25,8 @@ VALUES (
 	"Age of Empires III: Definitive Edition",
 	"2020-10-15 00:00:00",
 	"https://store.steampowered.com/app/933110/Age_of_Empires_III_Definitive_Edition/",
-	"https://www.microsoft.com/store/productId/9N1HF804QXN4"
+	"https://www.microsoft.com/store/productId/9N1HF804QXN4",
+	NULL
 ),
 (
 	"01GFW0Z04XQVFQ3SAZDGXBQ203",
@@ -31,12 +34,14 @@ VALUES (
 	"Age of Empires IV",
 	"2021-10-28 00:00:00",
 	"https://store.steampowered.com/app/1466860/Age_of_Empires_IV/",
-	"https://www.microsoft.com/store/productId/9N94NCGM1Q2N"
+	"https://www.microsoft.com/store/productId/9N94NCGM1Q2N",
+	NULL
 ),
 (
 	"01GGAB7YPC6M8XV6YZCK4S21E0",
 	"aomr",
 	"Age of Mythology: Retold",
+	NULL,
 	NULL,
 	NULL,
 	NULL

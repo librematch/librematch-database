@@ -1,7 +1,7 @@
 -- migrate:up
 CREATE TABLE "tbl_profiles" (
     "profile_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "profile_id" INTEGER NOT NULL UNIQUE,
+    "relic_link_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,
     "requested_privacy" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute people can set
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data

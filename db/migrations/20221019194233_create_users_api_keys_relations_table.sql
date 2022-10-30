@@ -1,6 +1,5 @@
 -- migrate:up
 CREATE TABLE "tbl_users_api_keys_relations" (
-	"user_api_key_relation_id" TEXT(26) PRIMARY KEY NOT NULL,
 	"user_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_ulid_ref" TEXT(36) NOT NULL,
     FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid"),

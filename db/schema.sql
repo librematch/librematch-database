@@ -2,21 +2,19 @@ CREATE TABLE IF NOT EXISTS "db_schema_migrations" (version varchar(255) primary 
 CREATE TABLE IF NOT EXISTS "tbl_api_keys" (
 	"api_key_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"api_key" TEXT(36) NOT NULL UNIQUE,
-	"valid_until_dt" DATETIME NOT NULL,
-	"has_admin_scope" BOOLEAN DEFAULT FALSE NOT NULL,
-	"has_user_scope" BOOLEAN DEFAULT TRUE NOT NULL,
-	"has_tournament_admin_scope" BOOLEAN DEFAULT FALSE NOT NULL
+	"valid_until_dt" DATETIME NOT NULL
 );
 CREATE TABLE IF NOT EXISTS "tbl_users" (
 	"user_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"profile_ulid_ref" TEXT(26) NULL UNIQUE,
+	"name" TEXT(50) NOT NULL,
+	"description" TEXT(255) NULL,
 	"rate_limit_per_unit" INTEGER DEFAULT 3,
 	"rate_limit_unit" INTEGER DEFAULT 0, -- 0=minute, 1=hour, 2=day, 3=month
 	"rate_limit_active" INTEGER DEFAULT 1 NOT NULL,
 	FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid")
 );
 CREATE TABLE IF NOT EXISTS "tbl_users_api_keys_relations" (
-	"user_api_key_relation_id" TEXT(26) PRIMARY KEY NOT NULL,
 	"user_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_ulid_ref" TEXT(36) NOT NULL,
     FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid"),
@@ -25,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "tbl_users_api_keys_relations" (
 );
 CREATE TABLE IF NOT EXISTS "tbl_profiles" (
     "profile_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "profile_id" INTEGER NOT NULL UNIQUE,
+    "relic_link_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,
     "requested_privacy" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute people can set
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
@@ -63,13 +61,12 @@ CREATE INDEX "profiles_name_IDX" ON "tbl_profiles" ("name");
 CREATE INDEX "profiles_country_IDX" ON "tbl_profiles" ("country_code");
 CREATE INDEX "profiles_last_match_IDX" ON "tbl_profiles" ("last_match_dt");
 CREATE TABLE IF NOT EXISTS "tbl_profiles_relations" (
-	"profile_relation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"main_profile_ulid_ref" TEXT(26) NOT NULL,
 	"secondary_profile_ulid_ref" TEXT(26) NOT NULL,
 	"description" TEXT(255) NULL,
     FOREIGN KEY ("main_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
     FOREIGN KEY ("secondary_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
-	UNIQUE ("main_profile_ulid_ref","secondary_profile_ulid_ref")
+	PRIMARY KEY ("main_profile_ulid_ref","secondary_profile_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
     "match_setting_ulid" TEXT(26) NOT NULL PRIMARY KEY,
@@ -98,37 +95,38 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "match_id" INTEGER NOT NULL UNIQUE,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "match_setting_ulid_ref" TEXT NOT NULL,
+    "match_setting_ulid_ref" TEXT(26) NOT NULL,
+    "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
+    "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name" TEXT,
     "server" TEXT,
+    "map_id" INTEGER, -- originally "location", changed due to confusion in tournaments (geographical location)
     "started_dt" DATETIME,
     "finished_dt" DATETIME,
-    "map_id" INTEGER, -- originally "location", changed due to confusion in tournaments
     "map_size" SMALLINT,
+    "patch_version" FLOAT,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
-    "patch_version" FLOAT,
     CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
-CREATE INDEX "match_finished_dt_IDX" ON "tbl_matches" ("finished_dt");
-CREATE INDEX "match_started_dt_IDX" ON "tbl_matches" ("started_dt");
-CREATE INDEX "match_same_map_IDX" ON "tbl_matches" ("map_id");
-CREATE INDEX "match_privacy_IDX" ON "tbl_matches" ("is_private");
-CREATE INDEX "match_rematch_IDX" ON "tbl_matches" ("is_rematch");
-CREATE INDEX "match_same_server_IDX" ON "tbl_matches" ("server");
-CREATE INDEX "match_version_IDX" ON "tbl_matches" ("version");
-CREATE INDEX "match_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
-CREATE INDEX "match_same_profile_IDX" ON "tbl_matches" ("creator_profile_ulid_ref");
-CREATE INDEX "match_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
-CREATE TABLE IF NOT EXISTS "tbl_matches_players_relation" (
-    "matches_player_relation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "match_ulid_ref" INTEGER NOT NULL,
-    "profile_ulid_ref" INTEGER NOT NULL,
-    -- "opponent_profile_id_ref" TODO: INTEGER NOT NULL, -- FEATURE: Opponent
-    "civilisation" SMALLINT,
+CREATE INDEX "matches_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
+CREATE INDEX "matches_same_map_IDX" ON "tbl_matches" ("map_id");
+CREATE INDEX "matches_rematch_IDX" ON "tbl_matches" ("is_rematch");
+CREATE INDEX "matches_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
+CREATE INDEX "matches_relic_link_match_uuid_IDX" ON "tbl_matches" ("relic_link_match_uuid");
+CREATE INDEX "matches_relic_link_match_id_IDX" ON "tbl_matches" ("relic_link_match_id");
+CREATE INDEX "matches_finished_dt_IDX" ON "tbl_matches" ("finished_dt");
+CREATE INDEX "matches_started_dt_IDX" ON "tbl_matches" ("started_dt");
+CREATE INDEX "matches_is_private_IDX" ON "tbl_matches" ("is_private");
+CREATE INDEX "matches_same_server_IDX" ON "tbl_matches" ("server");
+CREATE INDEX "matches_version_IDX" ON "tbl_matches" ("version");
+CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
+    "match_ulid_ref" TEXT(26) NOT NULL,
+    "profile_ulid_ref" TEXT(26) NOT NULL,
+    "opponent_1v1_profile_ulid_ref" TEXT(26) NULL, -- FEATURE: 1v1 Opponent
+    "civilisation_id" SMALLINT,
     "slot" SMALLINT NOT NULL, -- TODO: can two players have the same slot? when they have the same colour? archon mode!
     "team_number" SMALLINT,
     "color" SMALLINT,
@@ -138,11 +136,12 @@ CREATE TABLE IF NOT EXISTS "tbl_matches_players_relation" (
     "replay_url" TEXT NULL,
     CONSTRAINT "match_players_match_id_ref_fkey" FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "match_players_profile_id_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "match_players_opponent_1v1_profile_ulid_ref_fkey" FOREIGN KEY ("opponent_1v1_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
     UNIQUE("match_ulid_ref", "profile_ulid_ref")
-    -- CONSTRAINT "match_players_opponent_profile_id_ref_fkey" FOREIGN KEY ("opponent_profile_id_ref") REFERENCES "profiles" ("profile_id"),
 );
-CREATE INDEX "matches_players_relation_civ_IDX" ON "tbl_matches_players_relation" ("civilisation");
-CREATE INDEX "matches_players_relation_status_IDX" ON "tbl_matches_players_relation" ("status");
+CREATE INDEX "matches_players_relation_civ_IDX" ON "tbl_matches_players_relations" ("civilisation");
+CREATE INDEX "matches_players_relation_opponent_1v1_profile_ulid_ref_IDX" ON "tbl_matches_players_relations" ("opponent_1v1_profile_ulid_ref");
+CREATE INDEX "matches_players_relation_status_IDX" ON "tbl_matches_players_relations" ("status");
 CREATE TABLE IF NOT EXISTS "workflow_matches_import_pending" (
     "profile_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "priority" INTEGER NOT NULL
@@ -157,7 +156,6 @@ CREATE TABLE IF NOT EXISTS "workflow_matches_raw" (
 CREATE INDEX "workflow_matches_raw_version_IDX" ON "workflow_matches_raw" ("version");
 CREATE INDEX "workflow_matches_raw_error_IDX" ON "workflow_matches_raw" ("error");
 CREATE TABLE IF NOT EXISTS "cfg_components_settings" (
-    "component_setting_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "component_ulid_ref" TEXT(26) NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
@@ -170,10 +168,9 @@ CREATE TABLE IF NOT EXISTS "cfg_components" (
     "description" TEXT(50) NULL
 );
 CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
-    "ratings_ledger_entry_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "profile_ulid_ref" TEXT(26) NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "datetime" DATETIME NOT NULL,
+    "datetime_dt" DATETIME NOT NULL,
     "rating_diff" INTEGER,
     "overall_matches" INTEGER NOT NULL,
     "drops" INTEGER,
@@ -192,11 +189,12 @@ CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
     "last_match_time" DATETIME,
     "updated_at" DATETIME NOT NULL,
     CONSTRAINT "ratings_ledger_profile_ulid_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "ratings_ledger_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "ratings_ledger_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    PRIMARY KEY ("profile_ulid_ref", "leaderboard_ulid_ref", "datetime_dt")
 );
 CREATE TABLE IF NOT EXISTS "tbl_leaderboards" (
     "leaderboard_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "leaderboard_id" INTEGER NOT NULL, -- original id from Relic Link API
+    "relic_link_leaderboard_id" INTEGER NOT NULL, -- original id from Relic Link API
     "game_ulid_ref" TEXT(26) NOT NULL, -- each leaderboard can only exist in one game
     "description" TEXT(50) NOT NULL,
     CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
@@ -222,7 +220,45 @@ CREATE TABLE IF NOT EXISTS "tbl_games" (
 	"long_name" TEXT(255) NOT NULL,
 	"release_date" DATETIME,
 	"steam_url" TEXT,
-	"microsoft_url" TEXT
+	"microsoft_url" TEXT,
+	"icon_url" TEXT
+);
+CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics" (
+	"api_key_stat_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+	"auth_req_last_24h" INTEGER,
+	"auth_req_last_12h" INTEGER,
+	"auth_req_last_6h" INTEGER,
+	"auth_req_last_1h" INTEGER,
+	"auth_req_last_30min" INTEGER,
+	"auth_req_last_1min" INTEGER,
+	"datetime_dt" DATETIME NOT NULL
+);
+CREATE INDEX "api_keys_stats_datetime_dt_IDX" ON "tbl_api_keys_statistics" ("datetime_dt");
+CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics_relations" (
+	"api_key_ulid_ref" TEXT(26) NOT NULL,
+	"api_key_statistic_ulid_ref" TEXT(26) NOT NULL,
+	CONSTRAINT "api_keys_stats_api_key_ulid_ref_FK" FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
+	CONSTRAINT "api_keys_stats_api_key_statistic_ulid_ref_FK" FOREIGN KEY ("api_key_statistic_ulid_ref") REFERENCES "tbl_api_keys_statistics" ("api_key_stat_ulid") ON UPDATE CASCADE,
+	UNIQUE ("api_key_ulid_ref","api_key_statistic_ulid_ref")
+);
+CREATE TABLE IF NOT EXISTS "tbl_scopes" (
+    "scope_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "display_name" TEXT(25) NOT NULL UNIQUE,
+    "description" TEXT(255) NULL
+);
+CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
+	"user_ulid_ref" TEXT(26) NOT NULL,
+	"scope_ulid_ref" TEXT(26) NOT NULL,
+	CONSTRAINT "users_scopes_relations_user_ulid_ref_FK" FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
+	CONSTRAINT "users_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
+	UNIQUE ("user_ulid_ref","scope_ulid_ref")
+);
+CREATE TABLE IF NOT EXISTS "tbl_api_keys_scopes_relations" (
+	"api_key_ulid_ref" TEXT(26) NOT NULL,
+	"scope_ulid_ref" TEXT(26) NOT NULL,
+	CONSTRAINT "api_keys_scopes_relations_api_key_ulid_ref_FK" FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
+	CONSTRAINT "api_keys_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
+	UNIQUE ("api_key_ulid_ref","scope_ulid_ref")
 );
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
@@ -242,4 +278,10 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221020095052'),
   ('20221020151117'),
   ('20221020151258'),
-  ('20221021012325');
+  ('20221021012325'),
+  ('20221030043732'),
+  ('20221030043738'),
+  ('20221030052247'),
+  ('20221030052253'),
+  ('20221030053241'),
+  ('20221030054040');
