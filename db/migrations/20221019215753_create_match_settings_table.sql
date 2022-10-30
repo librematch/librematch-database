@@ -49,7 +49,8 @@ CREATE TABLE "tbl_match_settings" (
     ) -- FEATURE: STATISTICS FOR COMMON/MOST PLAYED MATCH SETTINGS
 );
 -- TODO: CHECK DATA TYPES FOR PADDING for not wasting space
-
+-- TODO: AoE:DE, AoE3DE, and AoE4 match settings are missing
+-- TODO: This is relatively awkward, is there another option to make it easily possible??? 
 
 -- migrate:down
 DROP TABLE "tbl_match_settings";
