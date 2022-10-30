@@ -12,4 +12,4 @@ CREATE UNIQUE INDEX "games_short_name_IDX" ON "tbl_games" ("short_name");
 
 
 -- migrate:down
-drop table "tbl_games";
+DROP TABLE "tbl_games";

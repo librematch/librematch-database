@@ -8,4 +8,4 @@ CREATE TABLE "cfg_components" (
 CREATE UNIQUE INDEX "components_name_IDX" ON "cfg_components" ("name");
 
 -- migrate:down
-drop table "cfg_components";
+DROP TABLE "cfg_components";

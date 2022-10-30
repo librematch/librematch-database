@@ -25,4 +25,4 @@ CREATE INDEX "matches_players_relation_civ_IDX" ON "tbl_matches_players_relation
 CREATE INDEX "matches_players_relation_status_IDX" ON "tbl_matches_players_relation" ("status");
 
 -- migrate:down
-drop table "tbl_matches_players_relation";
+DROP TABLE "tbl_matches_players_relation";

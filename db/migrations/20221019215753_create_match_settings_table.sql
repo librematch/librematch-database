@@ -28,4 +28,4 @@ CREATE TABLE "tbl_match_settings" (
 
 
 -- migrate:down
-drop table "tbl_match_settings";
+DROP TABLE "tbl_match_settings";

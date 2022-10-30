@@ -16,5 +16,5 @@ CREATE TABLE "tbl_community_resources" (
 CREATE UNIQUE INDEX "community_resource_url_IDX" ON "tbl_community_resources" ("url");
 
 -- migrate:down
-drop table "tbl_community_resources";
+DROP TABLE "tbl_community_resources";
 

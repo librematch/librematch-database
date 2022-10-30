@@ -5,4 +5,4 @@ CREATE TABLE "workflow_matches_import_pending" (
 );
 
 -- migrate:down
-drop table "workflow_matches_import_pending";
+DROP TABLE "workflow_matches_import_pending";

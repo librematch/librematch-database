@@ -10,4 +10,4 @@ CREATE TABLE "tbl_users_api_keys_relations" (
 CREATE UNIQUE INDEX "users_api_keys_relations_users_ulid_IDX" ON "tbl_users_api_keys_relations" ("user_ulid_ref","api_key_ulid_ref");
 
 -- migrate:down
-drop table "tbl_users_api_keys_relations";
+DROP TABLE "tbl_users_api_keys_relations";

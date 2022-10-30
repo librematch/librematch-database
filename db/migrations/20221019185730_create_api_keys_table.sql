@@ -11,4 +11,4 @@ CREATE TABLE "tbl_api_keys" (
 CREATE UNIQUE INDEX "api_keys_api_key_IDX" ON "tbl_api_keys" ("api_key");
 
 -- migrate:down
-drop table "tbl_api_keys";
+DROP TABLE "tbl_api_keys";

@@ -9,4 +9,4 @@ CREATE TABLE "tbl_game_definitions" (
 CREATE UNIQUE INDEX "game_definitions_game_ulid_ref_IDX" ON "tbl_game_definitions" ("game_ulid_ref");
 
 -- migrate:down
-drop table "tbl_game_definitions";
+DROP TABLE "tbl_game_definitions";

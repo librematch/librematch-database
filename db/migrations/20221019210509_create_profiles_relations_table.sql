@@ -11,4 +11,4 @@ CREATE TABLE "tbl_profiles_relations" (
 CREATE UNIQUE INDEX "profiles_relations_IDX" ON "tbl_profiles_relations" ("main_profile_ulid_ref","secondary_profile_ulid_ref");
 
 -- migrate:down
-drop table "tbl_profiles_relations";
+DROP TABLE "tbl_profiles_relations";

@@ -8,4 +8,4 @@ CREATE TABLE "tbl_community_resources_categories" (
 CREATE UNIQUE INDEX "community_resources_categories_display_text_IDX" ON "tbl_community_resources_categories" ("display_text");
 
 -- migrate:down
-drop table "tbl_community_resources_categories";
+DROP TABLE "tbl_community_resources_categories";

@@ -16,4 +16,4 @@ CREATE INDEX "database_dumps_timestamp_dt_IDX" ON "tbl_database_dumps" ("timesta
 CREATE INDEX "database_dumps_uploaded_at_dt_IDX" ON "tbl_database_dumps" ("uploaded_at_dt");
 
 -- migrate:down
-drop table "tbl_database_dumps";
+DROP TABLE "tbl_database_dumps";

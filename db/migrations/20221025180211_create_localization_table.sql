@@ -12,4 +12,4 @@ CREATE UNIQUE INDEX "localizations_lang_IDX" ON "tbl_localizations" ("lang");
 CREATE INDEX "localizations_updated_at_dt_IDX" ON "tbl_localizations" ("updated_at_dt");
 
 -- migrate:down
-drop table "tbl_localizations";
+DROP TABLE "tbl_localizations";

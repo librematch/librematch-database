@@ -42,4 +42,4 @@ CREATE INDEX "profiles_country_IDX" ON "tbl_profiles" ("country_code");
 CREATE INDEX "profiles_last_match_IDX" ON "tbl_profiles" ("last_match_dt");
 
 -- migrate:down
-drop table "tbl_profiles";
+DROP TABLE "tbl_profiles";

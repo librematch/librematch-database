@@ -8,4 +8,4 @@ CREATE TABLE "tbl_profiles_statistics_relations" (
 );
 
 -- migrate:down
-drop table "tbl_profiles_statistics";
+DROP TABLE "tbl_profiles_statistics";

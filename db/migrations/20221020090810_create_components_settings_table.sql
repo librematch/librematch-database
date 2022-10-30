@@ -10,4 +10,4 @@ CREATE TABLE "cfg_components_settings" (
 CREATE UNIQUE INDEX "components_settings_keys_IDX" ON "cfg_components_settings" ("component_ulid_ref", "key"); -- each component can only have the same key once
 
 -- migrate:down
-drop table "cfg_components_settings";
+DROP TABLE "cfg_components_settings";

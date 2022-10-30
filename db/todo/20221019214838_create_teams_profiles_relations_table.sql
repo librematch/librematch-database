@@ -13,4 +13,4 @@ CREATE UNIQUE INDEX "teams_profiles_relations_IDX" ON "tbl_teams_profiles_relati
 CREATE INDEX "teams_games_relations_IDX" ON "tbl_teams_profiles_relations" ("game_ulid_ref");
 
 -- migrate:down
-drop table "tbl_teams_profiles_relations";
+DROP TABLE "tbl_teams_profiles_relations";

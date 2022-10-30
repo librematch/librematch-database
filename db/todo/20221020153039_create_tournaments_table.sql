@@ -14,4 +14,4 @@ CREATE TABLE "tbl_tournaments" (
 );
 
 -- migrate:down
-drop table "tbl_tournaments";
+DROP TABLE "tbl_tournaments";

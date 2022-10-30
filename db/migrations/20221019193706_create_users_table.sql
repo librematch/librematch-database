@@ -9,4 +9,4 @@ CREATE TABLE "tbl_users" (
 );
 
 -- migrate:down
-drop table "tbl_users";
+DROP TABLE "tbl_users";

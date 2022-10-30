@@ -21,4 +21,4 @@ CREATE INDEX "statistics_game_ulid_ref_IDX" ON "tbl_statistics" ("game_ulid_ref"
 CREATE INDEX "statistics_leaderboard_ulid_ref_IDX" ON "tbl_statistics" ("leaderboard_ulid_ref");
 
 -- migrate:down
-drop table "tbl_statistics";
+DROP TABLE "tbl_statistics";

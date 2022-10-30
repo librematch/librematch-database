@@ -12,5 +12,5 @@ CREATE TABLE "tbl_community_resources_categories_relations" (
 CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "tbl_community_resources_categories_relations" ("community_resource_category_ulid_ref", "community_resource_ulid_ref", "game_ulid_ref");
 
 -- migrate:down
-drop table "tbl_community_resources_categories_relations";
+DROP TABLE "tbl_community_resources_categories_relations";
 

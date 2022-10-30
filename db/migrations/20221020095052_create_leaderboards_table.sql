@@ -10,4 +10,4 @@ CREATE TABLE "tbl_leaderboards" (
 CREATE UNIQUE INDEX "leaderboards_leaderboard_game_IDX" ON "tbl_leaderboards" ("leaderboard_ulid", "game_ulid_ref");
 
 -- migrate:down
-drop table "tbl_leaderboards";
+DROP TABLE "tbl_leaderboards";

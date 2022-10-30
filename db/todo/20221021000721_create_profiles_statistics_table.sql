@@ -29,5 +29,5 @@ CREATE TABLE "tbl_profiles_statistics" (
 -- CREATE INDEX "statistics_leaderboards_ulid_ref_IDX" ON "statistics" ("leaderboards_ulid_ref");
 
 -- migrate:down
-drop table "tbl_profiles_statistics";
+DROP TABLE "tbl_profiles_statistics";
 

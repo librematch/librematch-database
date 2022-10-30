@@ -31,4 +31,4 @@ CREATE INDEX "match_same_profile_IDX" ON "tbl_matches" ("creator_profile_ulid_re
 CREATE INDEX "match_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
 
 -- migrate:down
-drop table "tbl_matches";
+DROP TABLE "tbl_matches";

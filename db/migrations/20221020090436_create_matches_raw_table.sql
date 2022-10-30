@@ -10,4 +10,4 @@ CREATE INDEX "workflow_matches_raw_version_IDX" ON "workflow_matches_raw" ("vers
 CREATE INDEX "workflow_matches_raw_error_IDX" ON "workflow_matches_raw" ("error");
 
 -- migrate:down
-drop table "workflow_matches_raw";
+DROP TABLE "workflow_matches_raw";

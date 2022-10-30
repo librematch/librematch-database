@@ -26,4 +26,4 @@ CREATE TABLE "tbl_ratings_ledger" (
 );
 
 -- migrate:down
-drop table "tbl_ratings_ledger";
+DROP TABLE "tbl_ratings_ledger";

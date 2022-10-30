@@ -16,4 +16,4 @@ CREATE INDEX "teams_is_archived_IDX" ON "tbl_teams" ("is_archived"); -- old entr
 
 
 -- migrate:down
-drop table "tbl_teams";
+DROP TABLE "tbl_teams";
