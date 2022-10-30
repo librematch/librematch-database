@@ -2,7 +2,6 @@
 CREATE TABLE "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "match_setting_ulid_ref" TEXT(26) NOT NULL,
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name" TEXT,
@@ -14,7 +13,6 @@ CREATE TABLE "tbl_matches" (
     "patch_version" FLOAT,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
-    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 

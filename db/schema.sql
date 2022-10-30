@@ -89,61 +89,23 @@ CREATE TABLE IF NOT EXISTS "tbl_teams_profiles_games_relations" (
     FOREIGN KEY ("team_ulid_ref") REFERENCES "tbl_teams" ("team_ulid"),
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
     FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
-	UNIQUE ("team_ulid_ref", "profile_ulid_ref", "game_ulid_ref" )
+	UNIQUE ("team_ulid_ref", "profile_ulid_ref", "game_ulid_ref") -- but each combination exists only once
 );
 CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
-    "match_setting_ulid" TEXT(26) NOT NULL PRIMARY KEY,
-    "allow_cheats" BOOLEAN,
-    "difficulty" SMALLINT,
-    "empire_wars_mode" BOOLEAN,
-    "ending_age" SMALLINT,
-    "full_tech_tree" BOOLEAN,
-    "game_mode" SMALLINT,
-    "lock_speed" BOOLEAN,
-    "lock_teams" BOOLEAN,
-    "population" SMALLINT,
-    "record_game" BOOLEAN,
-    "regicide_mode" SMALLINT,
-    "resources" SMALLINT,
-    "reveal_map" SMALLINT,
-    "shared_exploration" BOOLEAN,
-    "speed" SMALLINT,
-    "starting_age" SMALLINT,
-    "sudden_death_mode" BOOLEAN,
-    "team_positions" BOOLEAN,
-    "team_together" BOOLEAN,
-    "treaty_length" INTEGER,
-    "turbo_mode" BOOLEAN,
-    "victory_condition" SMALLINT,
-    UNIQUE (
-        "allow_cheats",
-        "difficulty",
-        "empire_wars_mode",
-        "ending_age",
-        "full_tech_tree",
-        "game_mode",
-        "lock_speed",
-        "lock_teams",
-        "population",
-        "record_game",
-        "regicide_mode",
-        "resources",
-        "reveal_map",
-        "shared_exploration",
-        "speed",
-        "starting_age",
-        "sudden_death_mode",
-        "team_positions",
-        "team_together",
-        "treaty_length",
-        "turbo_mode",
-        "victory_condition"
-    ) -- FEATURE: STATISTICS FOR COMMON/MOST PLAYED MATCH SETTINGS
+    "match_setting_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "key" TEXT NOT NULL,
+    "text_value" TEXT NULL,
+    "boolean_value" BOOLEAN NULL,
+    "smallint_value" SMALLINT NULL,
+    "integer_value" INTEGER NULL,
+    "numeric_value" NUMERIC NULL,
+    "datetime_value" DATETIME NULL
+    -- CONSTRAINT "components_settings_component_ulid_ref_fkey" FOREIGN KEY ("component_ulid_ref") REFERENCES "cfg_components" ("component_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    -- UNIQUE("component_ulid_ref", "key")
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "match_setting_ulid_ref" TEXT(26) NOT NULL,
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name" TEXT,
@@ -155,7 +117,6 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "patch_version" FLOAT,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
-    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE INDEX "matches_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
@@ -334,6 +295,14 @@ CREATE TABLE IF NOT EXISTS "tbl_api_keys_scopes_relations" (
 	CONSTRAINT "api_keys_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
 	UNIQUE ("api_key_ulid_ref","scope_ulid_ref")
 );
+CREATE TABLE IF NOT EXISTS "tbl_match_match_settings_relations" (
+	"match_ulid_ref" TEXT(26) NOT NULL,
+	"match_setting_ulid_ref" TEXT(26) NOT NULL,
+    "type_of_value" TEXT CHECK( "type_of_value" IN ('text', 'boolean', 'smallint', 'integer', 'numeric', 'datetime') ) NOT NULL DEFAULT 'boolean',
+	CONSTRAINT "match_match_settings_relations_match_ulid_ref_FK" FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON UPDATE CASCADE,
+	CONSTRAINT "match_match_settings_relations_match_setting_ulid_ref_FK" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON UPDATE CASCADE,
+	UNIQUE ("match_ulid_ref","match_setting_ulid_ref")
+);
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221019185730'),
@@ -363,4 +332,5 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221030052247'),
   ('20221030052253'),
   ('20221030053241'),
-  ('20221030054040');
+  ('20221030054040'),
+  ('20221030190631');
