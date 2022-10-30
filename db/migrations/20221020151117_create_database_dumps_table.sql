@@ -2,6 +2,7 @@
 CREATE TABLE "tbl_database_dumps" (
 	"database_dump_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "game_ulid_ref" TEXT(26) NOT NULL, -- database dumps contain always all leaderboards of a game
+	"query_executed" TEXT NOT NULL,
 	"timestamp_dt" DATETIME NOT NULL,
 	-- "type" INTEGER NOT NULL, -- TODO: do we want to categorize DB dumps? 
 	"uploaded_at_dt" DATETIME NOT NULL,
