@@ -37,10 +37,10 @@ VALUES (
 	"01GGAB7YPC6M8XV6YZCK4S21E0",
 	"aomr",
 	"Age of Mythology: Retold",
-	null,
-	"still not available for pre-order on Steam",
-	"still not available for pre-order on Microsoft Store"
+	NULL,
+	NULL,
+	NULL
 );
 
 -- migrate:down
-delete from "games"; -- remove all entries from table
+DELETE FROM "tbl_games"; -- remove all entries from table

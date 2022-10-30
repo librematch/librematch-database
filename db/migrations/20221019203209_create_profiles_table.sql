@@ -1,7 +1,7 @@
 -- migrate:up
 CREATE TABLE "tbl_profiles" (
     "profile_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "profile_id" INTEGER NOT NULL,
+    "profile_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,
     "requested_privacy" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute people can set
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
@@ -30,7 +30,6 @@ CREATE TABLE "tbl_profiles" (
     "douyu_id" INTEGER NULL
 );
 
-CREATE UNIQUE INDEX "profiles_profile_id_IDX" ON "tbl_profiles" ("profile_id"); -- for lookup from backend, afterwards only ULID
 CREATE INDEX "profiles_steam_id_IDX" ON "tbl_profiles" ("steam_id"); -- how many players on each platform
 CREATE INDEX "profiles_requested_privacy_IDX" ON "tbl_profiles" ("requested_privacy");
 CREATE INDEX "profiles_is_verified_IDX" ON "tbl_profiles" ("is_verified");

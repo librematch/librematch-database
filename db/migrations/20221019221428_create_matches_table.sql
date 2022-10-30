@@ -1,9 +1,8 @@
 -- migrate:up
 CREATE TABLE "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "match_id" INTEGER NOT NULL,
+    "match_id" INTEGER NOT NULL UNIQUE,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "creator_profile_ulid_ref" TEXT(26) NOT NULL,
     "match_setting_ulid_ref" TEXT NOT NULL,
     "name" TEXT,
     "server" TEXT,
@@ -14,7 +13,6 @@ CREATE TABLE "tbl_matches" (
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "patch_version" FLOAT,
-    CONSTRAINT "matches_creator_profile_ulid_fkey" FOREIGN KEY ("creator_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );

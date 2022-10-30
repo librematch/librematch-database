@@ -6,7 +6,5 @@ CREATE TABLE "tbl_game_definitions" (
     CONSTRAINT "game_definitions_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
 );
 
-CREATE UNIQUE INDEX "game_definitions_game_ulid_ref_IDX" ON "tbl_game_definitions" ("game_ulid_ref");
-
 -- migrate:down
 DROP TABLE "tbl_game_definitions";
