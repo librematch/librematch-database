@@ -1,6 +1,6 @@
 -- migrate:up
 CREATE TABLE "tbl_tournaments" (
-    "tounament_ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "tournament_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "short" TEXT(10),
     "liquipedia_url" TEXT NULL,

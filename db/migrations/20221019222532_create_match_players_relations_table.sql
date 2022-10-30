@@ -10,9 +10,8 @@ CREATE TABLE "tbl_matches_players_relations" (
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
     "has_won" BOOLEAN,
     "replay_url" TEXT NULL,
-    CONSTRAINT "match_players_match_id_ref_fkey" FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "match_players_profile_id_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "match_players_opponent_1v1_profile_ulid_ref_fkey" FOREIGN KEY ("opponent_1v1_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+    FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     UNIQUE("match_ulid_ref", "profile_ulid_ref")
 );
 

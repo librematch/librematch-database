@@ -17,15 +17,18 @@ CREATE TABLE IF NOT EXISTS "tbl_users" (
 CREATE TABLE IF NOT EXISTS "tbl_users_api_keys_relations" (
 	"user_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_ulid_ref" TEXT(36) NOT NULL,
-    FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid"),
-    FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid"),
-	UNIQUE ("user_ulid_ref","api_key_ulid_ref")
+	"scope_ulid_ref" TEXT(26) NOT NULL,
+	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
+	UNIQUE ("user_ulid_ref","api_key_ulid_ref", "scope_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_profiles" (
     "profile_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "relic_link_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,
     "requested_privacy" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute people can set
+    "no_import" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute that keeps us of from reimporting data for this profile_id
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL, -- played a match in the last 30d
     "is_main_account" BOOLEAN DEFAULT TRUE NOT NULL,
@@ -86,6 +89,7 @@ CREATE TABLE IF NOT EXISTS "tbl_teams_profiles_games_relations" (
 	"team_ulid_ref" TEXT(26) NOT NULL, -- Many teams
 	"profile_ulid_ref" TEXT(26) NOT NULL, -- can have many players
 	"game_ulid_ref" TEXT(26) NOT NULL, -- playing on many games
+	"datetime_joined" DATETIME NULL, -- EXAMPLE: for characteristics of relation
     FOREIGN KEY ("team_ulid_ref") REFERENCES "tbl_teams" ("team_ulid"),
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
     FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
@@ -106,6 +110,7 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
+
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name" TEXT,
@@ -117,7 +122,7 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "patch_version" FLOAT,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
-    CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE INDEX "matches_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
 CREATE INDEX "matches_same_map_IDX" ON "tbl_matches" ("map_id");
@@ -133,7 +138,6 @@ CREATE INDEX "matches_version_IDX" ON "tbl_matches" ("version");
 CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
     "match_ulid_ref" TEXT(26) NOT NULL,
     "profile_ulid_ref" TEXT(26) NOT NULL,
-    "opponent_1v1_profile_ulid_ref" TEXT(26) NULL, -- FEATURE: 1v1 Opponent
     "civilisation_id" SMALLINT,
     "slot" SMALLINT NOT NULL, -- TODO: can two players have the same slot? when they have the same colour? archon mode!
     "team_number" SMALLINT,
@@ -142,13 +146,11 @@ CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
     "has_won" BOOLEAN,
     "replay_url" TEXT NULL,
-    CONSTRAINT "match_players_match_id_ref_fkey" FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "match_players_profile_id_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "match_players_opponent_1v1_profile_ulid_ref_fkey" FOREIGN KEY ("opponent_1v1_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+    FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     UNIQUE("match_ulid_ref", "profile_ulid_ref")
 );
 CREATE INDEX "matches_players_relation_civ_IDX" ON "tbl_matches_players_relations" ("civilisation");
-CREATE INDEX "matches_players_relation_opponent_1v1_profile_ulid_ref_IDX" ON "tbl_matches_players_relations" ("opponent_1v1_profile_ulid_ref");
 CREATE INDEX "matches_players_relation_status_IDX" ON "tbl_matches_players_relations" ("status");
 CREATE TABLE IF NOT EXISTS "workflow_matches_import_pending" (
     "profile_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -202,7 +204,7 @@ CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
 );
 CREATE TABLE IF NOT EXISTS "tbl_leaderboards" (
     "leaderboard_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-    "relic_link_leaderboard_id" INTEGER NOT NULL, -- original id from Relic Link API
+    "relic_link_leaderboard_id" INTEGER NULL, -- original id from Relic Link API, can be NULL because tournaments and other also have leaderboards
     "game_ulid_ref" TEXT(26) NOT NULL, -- each leaderboard can only exist in one game
     "description" TEXT(50) NOT NULL,
     CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
@@ -243,6 +245,19 @@ CREATE TABLE IF NOT EXISTS "tbl_community_resources" (
     "contact_form" BOOLEAN DEFAULT FALSE NOT NULL,
     "github_id" TEXT NULL,
     "project_source_url" TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS "tbl_tournaments" (
+    "tournament_ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "short" TEXT(10),
+    "liquipedia_url" TEXT NULL,
+    "liquipedia_tier" SMALLINT NULL,
+    "start_dt" DATETIME NULL,
+    "end_dt" DATETIME NULL,
+    "prizepool" FLOAT NULL,
+    "player_amount" INTEGER NULL,
+    "location" TEXT NULL
+    -- TODO: Add more table columns
 );
 CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories" (
     "community_resource_category_ulid" TEXT(26) PRIMARY KEY NOT NULL,
@@ -288,20 +303,30 @@ CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
 	CONSTRAINT "users_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
 	UNIQUE ("user_ulid_ref","scope_ulid_ref")
 );
-CREATE TABLE IF NOT EXISTS "tbl_api_keys_scopes_relations" (
-	"api_key_ulid_ref" TEXT(26) NOT NULL,
-	"scope_ulid_ref" TEXT(26) NOT NULL,
-	CONSTRAINT "api_keys_scopes_relations_api_key_ulid_ref_FK" FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
-	CONSTRAINT "api_keys_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
-	UNIQUE ("api_key_ulid_ref","scope_ulid_ref")
-);
-CREATE TABLE IF NOT EXISTS "tbl_match_match_settings_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
 	"match_ulid_ref" TEXT(26) NOT NULL,
 	"match_setting_ulid_ref" TEXT(26) NOT NULL,
     "type_of_value" TEXT CHECK( "type_of_value" IN ('text', 'boolean', 'smallint', 'integer', 'numeric', 'datetime') ) NOT NULL DEFAULT 'boolean',
-	CONSTRAINT "match_match_settings_relations_match_ulid_ref_FK" FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON UPDATE CASCADE,
-	CONSTRAINT "match_match_settings_relations_match_setting_ulid_ref_FK" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON UPDATE CASCADE,
 	UNIQUE ("match_ulid_ref","match_setting_ulid_ref")
+);
+CREATE TABLE IF NOT EXISTS "tbl_users_tournaments_relations" (
+	"user_ulid_ref" TEXT(26) NOT NULL,
+	"tournament_ulid_ref" TEXT(36) NOT NULL,
+	"scope_ulid_ref" TEXT(26) NOT NULL,
+	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
+	UNIQUE ("user_ulid_ref","tournament_ulid_ref", "scope_ulid_ref")
+);
+CREATE TABLE IF NOT EXISTS "tbl_tournaments_leaderboards_relations" (
+	"tournament_ulid_ref" TEXT(36) NOT NULL,
+	"leaderboard_ulid_ref" TEXT(26) NOT NULL,
+    "url_bracket" TEXT NULL,
+    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
+	UNIQUE ("tournament_ulid_ref", "leaderboard_ulid_ref")
 );
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
@@ -324,6 +349,7 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221020151117'),
   ('20221020151258'),
   ('20221020152930'),
+  ('20221020153039'),
   ('20221020180409'),
   ('20221020233715'),
   ('20221021012325'),
@@ -332,5 +358,6 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221030052247'),
   ('20221030052253'),
   ('20221030053241'),
-  ('20221030054040'),
-  ('20221030190631');
+  ('20221030190631'),
+  ('20221030200922'),
+  ('20221030202750');

@@ -4,6 +4,7 @@ CREATE TABLE "tbl_profiles" (
     "relic_link_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,
     "requested_privacy" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute people can set
+    "no_import" BOOLEAN DEFAULT FALSE NOT NULL, -- this is a special attribute that keeps us of from reimporting data for this profile_id
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL, -- played a match in the last 30d
     "is_main_account" BOOLEAN DEFAULT TRUE NOT NULL,
