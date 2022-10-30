@@ -1,17 +1,20 @@
 -- migrate:up
-CREATE TABLE "community_resources" (
-    "ulid" TEXT(26) NOT NULL PRIMARY KEY,
+CREATE TABLE "tbl_community_resources" (
+    "community_resource_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "url" TEXT NOT NULL,
-    "https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
+    "has_https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
     "description" TEXT(255),
-    "aoezone_id" TEXT(255),
-    "email_address" TEXT,
-    "discord_id" TEXT,
-    "discord_server_invite" TEXT,
+    "aoezone_id" TEXT(255) NULL,
+    "email_address" TEXT NULL,
+    "discord_id" TEXT NULL,
+    "discord_server_invite" TEXT NULL,
     "contact_form" BOOLEAN DEFAULT FALSE NOT NULL,
-    "github_id" TEXT
+    "github_id" TEXT NULL,
+    "project_source_url" TEXT NULL
 );
 
+CREATE UNIQUE INDEX "community_resource_url_IDX" ON "tbl_community_resources" ("url");
+
 -- migrate:down
-drop table "community_resources";
+drop table "tbl_community_resources";
 

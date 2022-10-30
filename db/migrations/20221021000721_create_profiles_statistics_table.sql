@@ -1,6 +1,6 @@
 -- migrate:up
-CREATE TABLE "profile_statistics" (
-	"ulid" TEXT(26) NOT NULL PRIMARY KEY,
+CREATE TABLE "tbl_profile_statistics" (
+	"profile_statistic_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     -- "game_ulid_ref" TEXT(26), -- REL
     -- "leaderboards_ulid_ref" TEXT(26), -- REL
 	"timestamp_dt" DATETIME NOT NULL,
@@ -29,5 +29,5 @@ CREATE TABLE "profile_statistics" (
 -- CREATE INDEX "statistics_leaderboards_ulid_ref_IDX" ON "statistics" ("leaderboards_ulid_ref");
 
 -- migrate:down
-drop table "profile_statistics";
+drop table "tbl_profile_statistics";
 

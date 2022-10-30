@@ -1,7 +1,6 @@
 -- migrate:up
-CREATE TABLE "match_settings" (
-    "sha256_hash_id" TEXT NOT NULL PRIMARY KEY, 
-    -- TODO: Is SHA256 reasonable here? too big? does it save space? does it make something better? what problem does it want to solve?
+CREATE TABLE "tbl_match_settings" (
+    "match_setting_ulid" TEXT(26) NOT NULL PRIMARY KEY, 
     "allow_cheats" BOOLEAN,
     "difficulty" SMALLINT,
     "empire_wars_mode" BOOLEAN,
@@ -24,10 +23,9 @@ CREATE TABLE "match_settings" (
     "treaty_length" INTEGER,
     "turbo_mode" BOOLEAN,
     "victory_condition" SMALLINT
-    -- MAYBE (for statistics):
-    -- "first_seen" DATETIME,
-    -- "last_seen" DATETIME,
 );
+-- TODO: CHECK DATA TYPES FOR PADDING for not wasting space
+
 
 -- migrate:down
-drop table "match_settings";
+drop table "tbl_match_settings";

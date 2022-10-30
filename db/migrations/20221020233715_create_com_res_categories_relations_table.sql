@@ -1,16 +1,16 @@
 -- migrate:up
-CREATE TABLE "community_resources_categories_relations" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "com_res_ulid_ref" TEXT(26) NOT NULL, -- Community resources
-    "com_res_categories_ulid_ref" TEXT(26), -- can have many categories
-    "games_ulid_ref" TEXT(26), -- for many games
-    FOREIGN KEY ("com_res_categories_ulid_ref") REFERENCES "community_resources_categories" ("ulid"),
-    FOREIGN KEY ("com_res_ulid_ref") REFERENCES "community_resources" ("ulid")
-    FOREIGN KEY ("games_ulid_ref") REFERENCES "games" ("ulid")
+CREATE TABLE "tbl_community_resources_categories_relations" (
+    "community_resource_relation_id" TEXT(26) PRIMARY KEY NOT NULL,
+    "community_resource_ulid_ref" TEXT(26) NOT NULL, -- Community resources
+    "community_resource_category_ulid_ref" TEXT(26), -- can have many categories
+    "game_ulid_ref" TEXT(26), -- for many games
+    FOREIGN KEY ("community_resource_category_ulid_ref") REFERENCES "tbl_community_resources_categories" ("community_resource_category_ulid"),
+    FOREIGN KEY ("community_resource_ulid_ref") REFERENCES "tbl_community_resources" ("community_resource_ulid")
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
 );
 
-CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "community_resources_categories_relations" ("com_res_categories_ulid_ref", "com_res_ulid_ref", "games_ulid_ref");
+CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "tbl_community_resources_categories_relations" ("community_resource_category_ulid_ref", "community_resource_ulid_ref", "game_ulid_ref");
 
 -- migrate:down
-drop table "community_resources_categories_relations";
+drop table "tbl_community_resources_categories_relations";
 

@@ -1,16 +1,16 @@
 -- migrate:up
-CREATE TABLE "teams_profiles_relations" (
-	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"teams_ulid_ref" TEXT(26) NOT NULL, -- Teams
-	"profiles_ulid_ref" TEXT(26) NOT NULL, -- can have many players
-	"games_ulid_ref" TEXT(26) NOT NULL, -- playing on different games
-    FOREIGN KEY ("teams_ulid_ref") REFERENCES "teams" ("ulid"),
-    FOREIGN KEY ("profiles_ulid_ref") REFERENCES "profiles" ("ulid"),
-    FOREIGN KEY ("games_ulid_ref") REFERENCES "games" ("ulid")
+CREATE TABLE "tbl_teams_profiles_relations" (
+	"team_profile_relation_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	"team_ulid_ref" TEXT(26) NOT NULL, -- A team
+	"profile_ulid_ref" TEXT(26) NOT NULL, -- can have many players
+	"game_ulid_ref" TEXT(26) NOT NULL, -- playing on different games
+    FOREIGN KEY ("team_ulid_ref") REFERENCES "tbl_teams" ("team_ulid"),
+    FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
 );
 
-CREATE UNIQUE INDEX "teams_profiles_relations_IDX" ON "teams_profiles_relations" ("teams_ulid_ref", "profiles_ulid_ref"); -- one profile, can only be in the same team once
-CREATE INDEX "teams_games_relations_IDX" ON "teams_profiles_relations" ("games_ulid_ref");
+CREATE UNIQUE INDEX "teams_profiles_relations_IDX" ON "tbl_teams_profiles_relations" ("team_ulid_ref", "profile_ulid_ref"); -- one profile, can only be in the same team once
+CREATE INDEX "teams_games_relations_IDX" ON "tbl_teams_profiles_relations" ("game_ulid_ref");
 
 -- migrate:down
-drop table "teams_profiles_relations";
+drop table "tbl_teams_profiles_relations";

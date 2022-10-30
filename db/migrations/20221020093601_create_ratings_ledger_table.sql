@@ -1,8 +1,8 @@
 -- migrate:up
-CREATE TABLE "ratings_ledger" (
-    "ulid" TEXT(26) NOT NULL,
-    "profiles_ulid_ref" TEXT(26) NOT NULL,
-    "leaderboards_ulid_ref" TEXT(26) NOT NULL,
+CREATE TABLE "tbl_ratings_ledger" (
+    "ratings_ledger_entry_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "profile_ulid_ref" TEXT(26) NOT NULL,
+    "leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "datetime" DATETIME NOT NULL,
     "rating_diff" INTEGER,
     "overall_matches" INTEGER NOT NULL,
@@ -21,10 +21,9 @@ CREATE TABLE "ratings_ledger" (
     "wins" INTEGER,
     "last_match_time" DATETIME,
     "updated_at" DATETIME NOT NULL,
-    PRIMARY KEY ("ulid", "profiles_ulid_ref", "leaderboards_ulid_ref"),
-    CONSTRAINT "ratings_ledger_profiles_ulid_ref_fkey" FOREIGN KEY ("profiles_ulid_ref") REFERENCES "profiles" ("ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "ratings_ledger_leaderboards_ulid_ref_fkey" FOREIGN KEY ("leaderboards_ulid_ref") REFERENCES "leaderboards" ("ulid") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "ratings_ledger_profile_ulid_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "ratings_ledger_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- migrate:down
-drop table "ratings_ledger";
+drop table "tbl_ratings_ledger";

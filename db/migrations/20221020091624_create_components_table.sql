@@ -1,12 +1,11 @@
 -- migrate:up
-CREATE TABLE "components" (
-    "ulid" TEXT(26) NOT NULL,
-    "component_name" TEXT NOT NULL,
-    "description" TEXT,
-    PRIMARY KEY ("ulid")
+CREATE TABLE "cfg_components" (
+    "component_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "name" TEXT(25) NOT NULL,
+    "description" TEXT(50) NULL
 );
 
-CREATE UNIQUE INDEX "components_component_name_IDX" ON "components" ("component_name");
+CREATE UNIQUE INDEX "components_name_IDX" ON "cfg_components" ("name");
 
 -- migrate:down
-drop table "components";
+drop table "cfg_components";

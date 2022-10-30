@@ -1,15 +1,14 @@
 -- migrate:up
-CREATE TABLE "profiles_relations" (
-	"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-	"main_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
-	"secondary_profiles_ulid_ref" TEXT(26) NOT NULL, -- more senseful to use profile_id probably, to reduce lookups when querying new data from aoc-ref-data
-	"comments" TEXT(255),
-    FOREIGN KEY ("main_profiles_ulid_ref") REFERENCES "profiles" ("ulid"),
-    FOREIGN KEY ("secondary_profiles_ulid_ref") REFERENCES "profiles" ("ulid")
+CREATE TABLE "tbl_profiles_relations" (
+	"profile_relation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+	"main_profile_ulid_ref" TEXT(26) NOT NULL,
+	"secondary_profile_ulid_ref" TEXT(26) NOT NULL,
+	"description" TEXT(255) NULL,
+    FOREIGN KEY ("main_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+    FOREIGN KEY ("secondary_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid")
 );
 
-CREATE UNIQUE INDEX "profiles_relations_IDX" ON "profiles_relations" ("main_profiles_ulid_ref","secondary_profiles_ulid_ref");
-
+CREATE UNIQUE INDEX "profiles_relations_IDX" ON "tbl_profiles_relations" ("main_profile_ulid_ref","secondary_profile_ulid_ref");
 
 -- migrate:down
-drop table "profiles_relations";
+drop table "tbl_profiles_relations";

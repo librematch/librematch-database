@@ -1,13 +1,13 @@
 -- migrate:up
-CREATE TABLE "components_settings" (
-    "id" INTEGER NOT NULL PRIMARY KEY,
-    "components_ulid_ref" TEXT(26) NOT NULL,
+CREATE TABLE "cfg_components_settings" (
+    "component_setting_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "component_ulid_ref" TEXT(26) NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
-    CONSTRAINT "components_settings_components_ulid_ref_fkey" FOREIGN KEY ("components_ulid_ref") REFERENCES "components" ("ulid") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "components_settings_component_ulid_ref_fkey" FOREIGN KEY ("component_ulid_ref") REFERENCES "cfg_components" ("component_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE UNIQUE INDEX "components_settings_keys_IDX" ON "components_settings" ("components_ulid_ref", "key"); -- each component can only have the same key once
+CREATE UNIQUE INDEX "components_settings_keys_IDX" ON "cfg_components_settings" ("component_ulid_ref", "key"); -- each component can only have the same key once
 
 -- migrate:down
-drop table "components_settings";
+drop table "cfg_components_settings";
