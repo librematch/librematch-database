@@ -3,7 +3,7 @@ CREATE TABLE "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "match_id" INTEGER NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "creator_profile_ulid_ref" TEXT(26),
+    "creator_profile_ulid_ref" TEXT(26) NOT NULL,
     "match_setting_ulid_ref" TEXT NOT NULL,
     "name" TEXT,
     "server" TEXT,
@@ -15,7 +15,8 @@ CREATE TABLE "tbl_matches" (
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "patch_version" FLOAT,
     CONSTRAINT "matches_creator_profile_ulid_fkey" FOREIGN KEY ("creator_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid")
+    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE INDEX "match_finished_dt_IDX" ON "tbl_matches" ("finished_dt");
@@ -26,6 +27,8 @@ CREATE INDEX "match_rematch_IDX" ON "tbl_matches" ("is_rematch");
 CREATE INDEX "match_same_server_IDX" ON "tbl_matches" ("server");
 CREATE INDEX "match_version_IDX" ON "tbl_matches" ("version");
 CREATE INDEX "match_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
+CREATE INDEX "match_same_profile_IDX" ON "tbl_matches" ("creator_profile_ulid_ref");
+CREATE INDEX "match_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
 
 -- migrate:down
 drop table "tbl_matches";

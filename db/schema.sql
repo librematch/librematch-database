@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "schema_migrations" (version varchar(255) primary key);
+CREATE TABLE IF NOT EXISTS "db_schema_migrations" (version varchar(255) primary key);
 CREATE TABLE IF NOT EXISTS "tbl_api_keys" (
 	"api_key_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"api_key" TEXT(36) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "match_id" INTEGER NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "creator_profile_ulid_ref" TEXT(26),
+    "creator_profile_ulid_ref" TEXT(26) NOT NULL,
     "match_setting_ulid_ref" TEXT NOT NULL,
     "name" TEXT,
     "server" TEXT,
@@ -139,7 +139,8 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "patch_version" FLOAT,
     CONSTRAINT "matches_creator_profile_ulid_fkey" FOREIGN KEY ("creator_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid")
+    CONSTRAINT "matches_match_settings_ulid_ref_fkey" FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "matches_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE INDEX "match_finished_dt_IDX" ON "tbl_matches" ("finished_dt");
 CREATE INDEX "match_started_dt_IDX" ON "tbl_matches" ("started_dt");
@@ -149,6 +150,8 @@ CREATE INDEX "match_rematch_IDX" ON "tbl_matches" ("is_rematch");
 CREATE INDEX "match_same_server_IDX" ON "tbl_matches" ("server");
 CREATE INDEX "match_version_IDX" ON "tbl_matches" ("version");
 CREATE INDEX "match_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
+CREATE INDEX "match_same_profile_IDX" ON "tbl_matches" ("creator_profile_ulid_ref");
+CREATE INDEX "match_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
 CREATE TABLE IF NOT EXISTS "tbl_matches_players_relation" (
     "matches_player_relation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "match_ulid_ref" INTEGER NOT NULL,
@@ -231,6 +234,7 @@ CREATE UNIQUE INDEX "leaderboards_leaderboard_game_IDX" ON "tbl_leaderboards" ("
 CREATE TABLE IF NOT EXISTS "tbl_database_dumps" (
 	"database_dump_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "game_ulid_ref" TEXT(26) NOT NULL, -- database dumps contain always all leaderboards of a game
+	"query_executed" TEXT NOT NULL,
 	"timestamp_dt" DATETIME NOT NULL,
 	-- "type" INTEGER NOT NULL, -- TODO: do we want to categorize DB dumps?
 	"uploaded_at_dt" DATETIME NOT NULL,
@@ -319,8 +323,8 @@ CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories_relations" (
     FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
 );
 CREATE UNIQUE INDEX "com_res_cat_ulids_IDX" ON "tbl_community_resources_categories_relations" ("community_resource_category_ulid_ref", "community_resource_ulid_ref", "game_ulid_ref");
-CREATE TABLE IF NOT EXISTS "tbl_profile_statistics" (
-	"profile_statistic_ulid" TEXT(26) NOT NULL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS "tbl_profiles_statistics" (
+	"profile_statistic_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     -- "game_ulid_ref" TEXT(26), -- REL
     -- "leaderboards_ulid_ref" TEXT(26), -- REL
 	"timestamp_dt" DATETIME NOT NULL,
@@ -348,13 +352,20 @@ CREATE TABLE IF NOT EXISTS "tbl_localizations" (
     "lang" TEXT (5) NOT NULL,
     "game_ulid_ref" TEXT(26) NOT NULL,
     "updated_at_dt" DATETIME NOT NULL,
-    "ftl-blob" BLOB NOT NULL,
+    "ftl_data" BLOB NOT NULL,
     CONSTRAINT "localizations_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE UNIQUE INDEX "localizations_lang_IDX" ON "tbl_localizations" ("lang");
 CREATE INDEX "localizations_updated_at_dt_IDX" ON "tbl_localizations" ("updated_at_dt");
+CREATE TABLE IF NOT EXISTS "tbl_profiles_statistics_relations" (
+	"profile_statistic_relation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "profile_ulid_ref" TEXT(26) NOT NULL,
+    "profile_statistic_ulid_ref" TEXT(26) NOT NULL,
+	CONSTRAINT "profiles_statistics_relations_profile_ulid_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+	CONSTRAINT "profiles_statistics_relations_profile_statistic_ulid_ref_fkey" FOREIGN KEY ("profile_statistic_ulid_ref") REFERENCES "tbl_profiles_statistics" ("profile_statistic_ulid")
+);
 -- Dbmate schema migrations
-INSERT INTO "schema_migrations" (version) VALUES
+INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221019185730'),
   ('20221019193706'),
   ('20221019194233'),
@@ -381,4 +392,5 @@ INSERT INTO "schema_migrations" (version) VALUES
   ('20221020233715'),
   ('20221021000721'),
   ('20221021012325'),
-  ('20221025180211');
+  ('20221025180211'),
+  ('20221030034120');
