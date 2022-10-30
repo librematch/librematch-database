@@ -223,6 +223,33 @@ CREATE TABLE IF NOT EXISTS "tbl_games" (
 	"microsoft_url" TEXT,
 	"icon_url" TEXT
 );
+CREATE TABLE IF NOT EXISTS "tbl_community_resources" (
+    "community_resource_ulid" TEXT(26) NOT NULL PRIMARY KEY,
+    "url" TEXT NOT NULL UNIQUE,
+    "has_https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
+    "description" TEXT(255),
+    "aoezone_id" TEXT(255) NULL,
+    "email_address" TEXT NULL,
+    "discord_id" TEXT NULL,
+    "discord_server_invite" TEXT NULL,
+    "contact_form" BOOLEAN DEFAULT FALSE NOT NULL,
+    "github_id" TEXT NULL,
+    "project_source_url" TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories" (
+    "community_resource_category_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "display_name" TEXT(25) NOT NULL UNIQUE,
+    "description" TEXT(255) NULL
+);
+CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories_relations" (
+    "community_resource_ulid_ref" TEXT(26) NOT NULL, -- Community resources
+    "community_resource_category_ulid_ref" TEXT(26) NOT NULL, -- can have many categories
+    "game_ulid_ref" TEXT(26) NOT NULL, -- for many games
+    FOREIGN KEY ("community_resource_category_ulid_ref") REFERENCES "tbl_community_resources_categories" ("community_resource_category_ulid"),
+    FOREIGN KEY ("community_resource_ulid_ref") REFERENCES "tbl_community_resources" ("community_resource_ulid")
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
+    UNIQUE ("community_resource_category_ulid_ref", "community_resource_ulid_ref", "game_ulid_ref")
+);
 CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics" (
 	"api_key_stat_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"auth_req_last_24h" INTEGER,
@@ -278,6 +305,9 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221020095052'),
   ('20221020151117'),
   ('20221020151258'),
+  ('20221020152930'),
+  ('20221020180409'),
+  ('20221020233715'),
   ('20221021012325'),
   ('20221030043732'),
   ('20221030043738'),
