@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS "tbl_profiles" (
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL, -- played a match in the last 30d
     "is_main_account" BOOLEAN DEFAULT TRUE NOT NULL,
+    "is_hidden" BOOLEAN DEFAULT FALSE NOT NULL, -- this lets us hide e.g. cheaters
     "alias" TEXT(50) NOT NULL,
     "name" TEXT(50) NULL, -- real name from Liquipedia
     "country_code" TEXT(5), -- same as language string, e.g. es-MX
@@ -68,6 +69,28 @@ CREATE TABLE IF NOT EXISTS "tbl_profiles_relations" (
     FOREIGN KEY ("secondary_profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
 	PRIMARY KEY ("main_profile_ulid_ref","secondary_profile_ulid_ref")
 );
+CREATE TABLE IF NOT EXISTS "tbl_teams" (
+	"team_ulid" TEXT(26) NOT NULL PRIMARY KEY,
+	"name" TEXT(255) NOT NULL,
+	"in_game_tag" TEXT(15) NULL,
+	"is_inactive" BOOLEAN DEFAULT FALSE NOT NULL,
+	"liquipedia_id" TEXT(50) NULL,
+	"discord_invite" TEXT(50) NULL,
+	"twitch_id" TEXT(50) NULL,
+	"twitter_id" TEXT(50) NULL,
+	"youtube_url" TEXT(50) NULL,
+	"fbgaming_id" TEXT(50) NULL
+);
+CREATE INDEX "teams_is_inactive_IDX" ON "tbl_teams" ("is_inactive");
+CREATE TABLE IF NOT EXISTS "tbl_teams_profiles_games_relations" (
+	"team_ulid_ref" TEXT(26) NOT NULL, -- Many teams
+	"profile_ulid_ref" TEXT(26) NOT NULL, -- can have many players
+	"game_ulid_ref" TEXT(26) NOT NULL, -- playing on many games
+    FOREIGN KEY ("team_ulid_ref") REFERENCES "tbl_teams" ("team_ulid"),
+    FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
+	UNIQUE ("team_ulid_ref", "profile_ulid_ref", "game_ulid_ref" )
+);
 CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
     "match_setting_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "allow_cheats" BOOLEAN,
@@ -93,7 +116,6 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
     "turbo_mode" BOOLEAN,
     "victory_condition" SMALLINT,
     UNIQUE (
-        "match_setting_ulid",
         "allow_cheats",
         "difficulty",
         "empire_wars_mode",
@@ -116,7 +138,7 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
         "treaty_length",
         "turbo_mode",
         "victory_condition"
-    )
+    ) -- FEATURE: STATISTICS FOR COMMON/MOST PLAYED MATCH SETTINGS
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
@@ -319,6 +341,8 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221019194233'),
   ('20221019203209'),
   ('20221019210509'),
+  ('20221019213552'),
+  ('20221019214838'),
   ('20221019215753'),
   ('20221019221428'),
   ('20221019222532'),

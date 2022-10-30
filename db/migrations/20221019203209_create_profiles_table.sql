@@ -7,6 +7,7 @@ CREATE TABLE "tbl_profiles" (
     "is_verified" BOOLEAN DEFAULT FALSE NOT NULL, -- has an entry on aoc-ref-data
     "is_active" BOOLEAN DEFAULT TRUE NOT NULL, -- played a match in the last 30d
     "is_main_account" BOOLEAN DEFAULT TRUE NOT NULL,
+    "is_hidden" BOOLEAN DEFAULT FALSE NOT NULL, -- this lets us hide e.g. cheaters
     "alias" TEXT(50) NOT NULL,
     "name" TEXT(50) NULL, -- real name from Liquipedia
     "country_code" TEXT(5), -- same as language string, e.g. es-MX
