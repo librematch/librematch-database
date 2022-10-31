@@ -118,20 +118,20 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
+    "map_ulid_ref" TEXT(26) NOT NULL, -- originally "location", changed due to confusion in tournaments (geographical location)
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name_lobby" TEXT NOT NULL,
     "server" TEXT NOT NULL,
-    "map_id" INTEGER NOT NULL, -- originally "location", changed due to confusion in tournaments (geographical location)
     "datetime_started" DATETIME NULL,
     "datetime_finished" DATETIME NULL,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
-    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY ("map_ulid_ref") REFERENCES "tbl_maps" ("map_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE INDEX "matches_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
-CREATE INDEX "matches_same_map_IDX" ON "tbl_matches" ("map_id");
 CREATE INDEX "matches_rematch_IDX" ON "tbl_matches" ("is_rematch");
 CREATE INDEX "matches_matches_on_leaderboard_IDX" ON "tbl_matches" ("leaderboard_ulid_ref");
 CREATE INDEX "matches_relic_link_match_uuid_IDX" ON "tbl_matches" ("relic_link_match_uuid");
@@ -365,6 +365,20 @@ CREATE TABLE IF NOT EXISTS "tbl_civilisations" (
 	FOREIGN KEY ("dlc_ulid_ref") REFERENCES "tbl_dlcs" ("dlc_ulid"),
     CONSTRAINT "check_at_least_one_game_or_dlc_is_not_null" CHECK (("game_ulid_ref" IS NOT NULL AND "is_base_civilisation" IS TRUE) OR ("dlc_ulid_ref" IS NOT NULL AND "is_base_civilisation" IS FALSE))
 );
+CREATE TABLE IF NOT EXISTS "tbl_maps" (
+	"map_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "relic_link_map_id" INTEGER NOT NULL,
+	"name" TEXT(50) NOT NULL,
+    "name_file" TEXT(255) NOT NULL UNIQUE,
+    "url_icon" TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS "tbl_maps_leaderboards_relations" (
+	"leaderboard_ulid_ref" TEXT(26) NOT NULL,
+	"map_ulid_ref" TEXT(36) NOT NULL,
+    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON UPDATE CASCADE,
+    FOREIGN KEY ("map_ulid_ref") REFERENCES "tbl_maps" ("map_ulid") ON UPDATE CASCADE,
+	PRIMARY KEY ("leaderboard_ulid_ref", "map_ulid_ref")
+);
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221019185730'),
@@ -399,4 +413,6 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221030200922'),
   ('20221030202750'),
   ('20221031083722'),
-  ('20221031095545');
+  ('20221031095545'),
+  ('20221031104304'),
+  ('20221031104702');
