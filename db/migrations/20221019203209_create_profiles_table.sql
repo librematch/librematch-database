@@ -13,21 +13,22 @@ CREATE TABLE "tbl_profiles" (
     "name" TEXT(50) NULL, -- real name from Liquipedia
     "country_code" TEXT(5), -- same as language string, e.g. es-MX
     "avatar_hash" TEXT(50), -- Hash to generate Avatar URLs for small, medium, full
-    "last_match_fetched_dt" DATETIME,
-    "last_match_dt" DATETIME, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
-    "last_refresh_dt" DATETIME,
-    "delay_timer_sec" INTEGER DEFAULT 600 NOT NULL, -- set by Tournament admins, delays a profiles' match to be shown on our API
-    "delay_timer_reset_hours" INTEGER DEFAULT 1 NOT NULL, -- set by Tournament admins, when the timer expires
-    "delay_timer_active" INTEGER DEFAULT 0 NOT NULL, -- if the timer is set
+    "datetime_first_seen" DATETIME,
+    "datetime_last_match_fetched" DATETIME,
+    "datetime_last_match" DATETIME, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
+    "datetime_last_refresh" DATETIME,
+    "timer_delay_in_sec" INTEGER DEFAULT 600 NOT NULL, -- set by Tournament admins, delays a profiles' match to be shown on our API
+    "timer_delay_reset_afer_hours" INTEGER DEFAULT 1 NOT NULL, -- set by Tournament admins, when the timer expires
+    "timer_delay_active" INTEGER DEFAULT 0 NOT NULL, -- if the timer is set
     "discord_invite" TEXT(50) NULL,
-    "discord_id" TEXT(50) NULL,
-    "twitter_id" TEXT(25) NULL,
-    "youtube_url" TEXT(50) NULL,
-    "twitch_id" TEXT(25) NULL,
-    "fbgaming_id" TEXT(25) NULL,
-    "instagram_id" TEXT(25) NULL,
-    "liquipedia_id" TEXT(25) NULL,
+    "name_discord" TEXT(50) NULL,
+    "name_twitter" TEXT(50) NULL,
+    "name_twitch" TEXT(50) NULL,
+    "name_fbgaming" TEXT(50) NULL,
+    "name_instagram" TEXT(50) NULL,
+    "name_liquipedia" TEXT(50) NULL,
     "esports_earnings_id" INTEGER NULL,
+    "url_youtube" TEXT(100) NULL,
     "aoe_elo_id" INTEGER NULL,
     "douyu_id" INTEGER NULL
 );
@@ -40,7 +41,7 @@ CREATE INDEX "profiles_main_account_IDX" ON "tbl_profiles" ("is_main_account");
 CREATE INDEX "profiles_alias_IDX" ON "tbl_profiles" ("alias");
 CREATE INDEX "profiles_name_IDX" ON "tbl_profiles" ("name");
 CREATE INDEX "profiles_country_IDX" ON "tbl_profiles" ("country_code");
-CREATE INDEX "profiles_last_match_IDX" ON "tbl_profiles" ("last_match_dt");
+CREATE INDEX "profiles_datetime_last_match_IDX" ON "tbl_profiles" ("datetime_last_match");
 
 -- migrate:down
 DROP TABLE "tbl_profiles";
