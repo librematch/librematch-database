@@ -362,7 +362,7 @@ CREATE TABLE IF NOT EXISTS "tbl_civilisations" (
     "url_icon" TEXT NULL,
 	FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
 	FOREIGN KEY ("dlc_ulid_ref") REFERENCES "tbl_dlcs" ("dlc_ulid"),
-    CONSTRAINT "check_at_least_one_game_or_dlc_is_not_null" CHECK ("game_ulid_ref" IS NOT NULL or "dlc_ulid_ref" IS NOT NULL)
+    CONSTRAINT "check_at_least_one_game_or_dlc_is_not_null" CHECK (("game_ulid_ref" IS NOT NULL AND "is_base_civilisation" IS TRUE) OR ("dlc_ulid_ref" IS NOT NULL AND "is_base_civilisation" IS FALSE))
 );
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
