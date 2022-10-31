@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_community_resources_categories_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories_relations" (
     "community_resource_ulid_ref" TEXT(26) NOT NULL, -- Community resources
     "community_resource_category_ulid_ref" TEXT(26) NOT NULL, -- can have many categories
     "game_ulid_ref" TEXT(26) NOT NULL, -- for many games

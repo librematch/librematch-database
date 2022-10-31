@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_match_settings" (
+CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
     "match_setting_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "key" TEXT NOT NULL,
     "text_value" TEXT NULL,

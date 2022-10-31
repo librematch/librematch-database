@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_matches_players_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
     "match_ulid_ref" TEXT(26) NOT NULL,
     "profile_ulid_ref" TEXT(26) NOT NULL,
     "civilisation_ulid_ref" TEXT(26) NOT NULL,

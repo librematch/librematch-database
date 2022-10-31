@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_users" (
+CREATE TABLE IF NOT EXISTS "tbl_users" (
 	"user_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"profile_ulid_ref" TEXT(26) NULL UNIQUE,
 	"email_address" TEXT(100) NULL,

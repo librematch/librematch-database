@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_civilisations" (
+CREATE TABLE IF NOT EXISTS "tbl_civilisations" (
 	"civilisation_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "relic_link_civilisation_id" INTEGER NOT NULL,
     "is_base_civilisation" BOOLEAN DEFAULT TRUE NOT NULL, 

@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_ratings_ledger" (
+CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
     "profile_ulid_ref" TEXT(26) NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "rating_diff" INTEGER NULL,

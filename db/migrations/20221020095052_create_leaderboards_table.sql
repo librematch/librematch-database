@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_leaderboards" (
+CREATE TABLE IF NOT EXISTS "tbl_leaderboards" (
     "leaderboard_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "relic_link_leaderboard_id" INTEGER NULL, -- original id from Relic Link API, can be NULL because tournaments and other also have leaderboards
     "game_ulid_ref" TEXT(26) NOT NULL, -- each leaderboard can only exist in one game

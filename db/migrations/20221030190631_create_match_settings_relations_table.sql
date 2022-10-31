@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_matches_match_settings_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
 	"match_ulid_ref" TEXT(26) NOT NULL,
 	"match_setting_ulid_ref" TEXT(26) NOT NULL,
     "type_of_value" TEXT CHECK( "type_of_value" IN ('text_value', 'boolean_value', 'smallint_value', 'integer_value', 'numeric_value', 'datetime_value') ) DEFAULT 'boolean_value' NOT NULL, 

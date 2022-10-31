@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "workflow_matches_raw" (
+CREATE TABLE IF NOT EXISTS "workflow_matches_raw" (
     "match_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "json" TEXT NOT NULL,
     "version" INTEGER NULL,

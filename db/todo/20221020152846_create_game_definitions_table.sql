@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_game_definitions" (
+CREATE TABLE IF NOT EXISTS "tbl_game_definitions" (
     "game_definition_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "game_ulid_ref" TEXT(26) NOT NULL,
     -- TODO

@@ -379,6 +379,11 @@ CREATE TABLE IF NOT EXISTS "tbl_maps_leaderboards_relations" (
     FOREIGN KEY ("map_ulid_ref") REFERENCES "tbl_maps" ("map_ulid") ON UPDATE CASCADE,
 	PRIMARY KEY ("leaderboard_ulid_ref", "map_ulid_ref")
 );
+CREATE TABLE IF NOT EXISTS "tbl_continents" (
+	"continent_ulid" TEXT(26) PRIMARY KEY NOT NULL,
+    "relic_link_continent_id" INTEGER NOT NULL,
+	"name" TEXT(25) NOT NULL
+);
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221019185730'),
@@ -415,4 +420,5 @@ INSERT INTO "db_schema_migrations" (version) VALUES
   ('20221031083722'),
   ('20221031095545'),
   ('20221031104304'),
-  ('20221031104702');
+  ('20221031104702'),
+  ('20221031110638');

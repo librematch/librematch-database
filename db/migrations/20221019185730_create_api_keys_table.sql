@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_api_keys" (
+CREATE TABLE IF NOT EXISTS "tbl_api_keys" (
 	"api_key_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"api_key" TEXT(36) NOT NULL UNIQUE,
 	"datetime_valid_until" DATETIME NOT NULL

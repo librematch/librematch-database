@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "cfg_components_settings" (
+CREATE TABLE IF NOT EXISTS "cfg_components_settings" (
     "component_ulid_ref" TEXT(26) NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,

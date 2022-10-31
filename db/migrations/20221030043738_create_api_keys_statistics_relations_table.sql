@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_api_keys_statistics_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics_relations" (
 	"api_key_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_statistic_ulid_ref" TEXT(26) NOT NULL,
 	"datetime_created" DATETIME NOT NULL,

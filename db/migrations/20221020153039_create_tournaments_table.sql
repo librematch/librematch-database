@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_tournaments" (
+CREATE TABLE IF NOT EXISTS "tbl_tournaments" (
     "tournament_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "name_long" TEXT(50) NOT NULL,
     "name_short" TEXT(10),

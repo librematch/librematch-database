@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_teams_profiles_games_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_teams_profiles_games_relations" (
 	"team_ulid_ref" TEXT(26) NOT NULL, -- Many teams
 	"profile_ulid_ref" TEXT(26) NOT NULL, -- can have many players
 	"game_ulid_ref" TEXT(26) NOT NULL, -- playing on many games

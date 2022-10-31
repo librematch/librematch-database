@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_profiles" (
+CREATE TABLE IF NOT EXISTS "tbl_profiles" (
     "profile_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "relic_link_id" INTEGER NOT NULL UNIQUE,
     "steam_id" INTEGER NULL,

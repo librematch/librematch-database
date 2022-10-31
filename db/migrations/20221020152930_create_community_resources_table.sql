@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_community_resources" (
+CREATE TABLE IF NOT EXISTS "tbl_community_resources" (
     "community_resource_ulid" TEXT(26) NOT NULL PRIMARY KEY,
     "name_long" TEXT(100) NOT NULL,
     "url_resource" TEXT NOT NULL UNIQUE,

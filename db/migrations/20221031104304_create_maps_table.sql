@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_maps" (
+CREATE TABLE IF NOT EXISTS "tbl_maps" (
 	"map_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "relic_link_map_id" INTEGER NOT NULL,
 	"name" TEXT(50) NOT NULL,

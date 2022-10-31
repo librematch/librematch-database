@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_profiles_statistics" (
+CREATE TABLE IF NOT EXISTS "tbl_profiles_statistics" (
 	"profile_statistic_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     -- "game_ulid_ref" TEXT(26), -- REL
     -- "leaderboards_ulid_ref" TEXT(26), -- REL

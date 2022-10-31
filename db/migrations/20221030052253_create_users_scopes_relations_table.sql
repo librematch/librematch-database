@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_users_scopes_relations" (
+CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
 	"user_ulid_ref" TEXT(26) NOT NULL,
 	"scope_ulid_ref" TEXT(26) NOT NULL,
 	FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,

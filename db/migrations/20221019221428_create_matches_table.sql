@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE "tbl_matches" (
+CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "map_ulid_ref" TEXT(26) NOT NULL, -- originally "location", changed due to confusion in tournaments (geographical location)
