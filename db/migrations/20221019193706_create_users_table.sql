@@ -9,8 +9,8 @@ CREATE TABLE "tbl_users" (
 	"name_discord" TEXT(50) NULL,
 	"about_me" TEXT(255) NULL,
 	"datetime_registered" DATETIME NOT NULL,
-	"rate_limit_per_unit" INTEGER DEFAULT 3,
-	"rate_limit_unit" INTEGER DEFAULT 0, -- 0=minute, 1=hour, 2=day, 3=month
+	"rate_limit_per_unit" INTEGER DEFAULT 3 NOT NULL,
+	"rate_limit_unit" INTEGER DEFAULT 0 NOT NULL, -- 0=minute, 1=hour, 2=day, 3=month
 	"rate_limit_active" INTEGER DEFAULT 1 NOT NULL,
 	FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid")
 );

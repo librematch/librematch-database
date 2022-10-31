@@ -4,13 +4,11 @@ CREATE TABLE "tbl_matches" (
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
-    "name_lobby" TEXT,
-    "server" TEXT,
-    "map_id" INTEGER, -- originally "location", changed due to confusion in tournaments (geographical location)
-    "datetime_started" DATETIME,
-    "datetime_finished" DATETIME,
-    "map_size" SMALLINT,
-    "patch_version" FLOAT,
+    "name_lobby" TEXT NOT NULL,
+    "server" TEXT NOT NULL,
+    "map_id" INTEGER NOT NULL, -- originally "location", changed due to confusion in tournaments (geographical location)
+    "datetime_started" DATETIME NULL,
+    "datetime_finished" DATETIME NULL,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,

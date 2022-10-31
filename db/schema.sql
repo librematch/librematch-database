@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS "tbl_users" (
 	"name_discord" TEXT(50) NULL,
 	"about_me" TEXT(255) NULL,
 	"datetime_registered" DATETIME NOT NULL,
-	"rate_limit_per_unit" INTEGER DEFAULT 3,
-	"rate_limit_unit" INTEGER DEFAULT 0, -- 0=minute, 1=hour, 2=day, 3=month
+	"rate_limit_per_unit" INTEGER DEFAULT 3 NOT NULL,
+	"rate_limit_unit" INTEGER DEFAULT 0 NOT NULL, -- 0=minute, 1=hour, 2=day, 3=month
 	"rate_limit_active" INTEGER DEFAULT 1 NOT NULL,
 	FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid")
 );
@@ -41,12 +41,12 @@ CREATE TABLE IF NOT EXISTS "tbl_profiles" (
     "is_hidden" BOOLEAN DEFAULT FALSE NOT NULL, -- this lets us hide e.g. cheaters
     "alias" TEXT(50) NOT NULL,
     "name" TEXT(50) NULL, -- real name from Liquipedia
-    "country_code" TEXT(5), -- same as language string, e.g. es-MX
-    "avatar_hash" TEXT(50), -- Hash to generate Avatar URLs for small, medium, full
-    "datetime_first_seen" DATETIME,
-    "datetime_last_match_fetched" DATETIME,
-    "datetime_last_match" DATETIME, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
-    "datetime_last_refresh" DATETIME,
+    "country_code" TEXT(5) NULL, -- same as language string, e.g. es-MX
+    "avatar_hash" TEXT(50) NULL, -- Hash to generate Avatar URLs for small, medium, full
+    "datetime_first_seen" DATETIME NOT NULL,
+    "datetime_last_match_fetched" DATETIME NULL,
+    "datetime_last_match" DATETIME NULL, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
+    "datetime_last_refresh" DATETIME NULL,
     "timer_delay_in_sec" INTEGER DEFAULT 600 NOT NULL, -- set by Tournament admins, delays a profiles' match to be shown on our API
     "timer_delay_reset_afer_hours" INTEGER DEFAULT 1 NOT NULL, -- set by Tournament admins, when the timer expires
     "timer_delay_active" INTEGER DEFAULT 0 NOT NULL, -- if the timer is set
@@ -96,7 +96,9 @@ CREATE TABLE IF NOT EXISTS "tbl_teams_profiles_games_relations" (
 	"team_ulid_ref" TEXT(26) NOT NULL, -- Many teams
 	"profile_ulid_ref" TEXT(26) NOT NULL, -- can have many players
 	"game_ulid_ref" TEXT(26) NOT NULL, -- playing on many games
-	"datetime_joined" DATETIME NULL, -- EXAMPLE: for characteristics of relation
+	"datetime_joined" DATETIME NULL,
+	"datetime_left" DATETIME NULL,
+	-- TODO: add statistics for player in team on game
     FOREIGN KEY ("team_ulid_ref") REFERENCES "tbl_teams" ("team_ulid"),
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid"),
     FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
@@ -118,13 +120,11 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
-    "name_lobby" TEXT,
-    "server" TEXT,
-    "map_id" INTEGER, -- originally "location", changed due to confusion in tournaments (geographical location)
-    "datetime_started" DATETIME,
-    "datetime_finished" DATETIME,
-    "map_size" SMALLINT,
-    "patch_version" FLOAT,
+    "name_lobby" TEXT NOT NULL,
+    "server" TEXT NOT NULL,
+    "map_id" INTEGER NOT NULL, -- originally "location", changed due to confusion in tournaments (geographical location)
+    "datetime_started" DATETIME NULL,
+    "datetime_finished" DATETIME NULL,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
@@ -147,11 +147,11 @@ CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
     "profile_ulid_ref" TEXT(26) NOT NULL,
     "civilisation_ulid_ref" TEXT(26) NOT NULL,
     "slot" SMALLINT NOT NULL, -- TODO: can two players have the same slot? when they have the same colour? archon mode!
-    "team_number" SMALLINT,
-    "color" SMALLINT,
+    "team_number" SMALLINT NOT NULL,
+    "color" SMALLINT NOT NULL,
     "is_ready" BOOLEAN NOT NULL,
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
-    "has_won" BOOLEAN,
+    "has_won" BOOLEAN DEFAULT FALSE NOT NULL,
     "url_recorded_game" TEXT NULL,
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -170,8 +170,8 @@ CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE IF NOT EXISTS "workflow_matches_raw" (
     "match_id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "json" TEXT NOT NULL,
-    "version" INTEGER,
-    "error" BOOLEAN
+    "version" INTEGER NULL,
+    "error" BOOLEAN DEFAULT FALSE NOT NULL
 );
 CREATE INDEX "workflow_matches_raw_version_IDX" ON "workflow_matches_raw" ("version");
 CREATE INDEX "workflow_matches_raw_error_IDX" ON "workflow_matches_raw" ("error");
@@ -190,24 +190,24 @@ CREATE TABLE IF NOT EXISTS "cfg_components" (
 CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
     "profile_ulid_ref" TEXT(26) NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "rating_diff" INTEGER,
+    "rating_diff" INTEGER NULL,
     "overall_matches" INTEGER NOT NULL,
-    "drops" INTEGER,
-    "current_rank" INTEGER,
-    "highest_rank" INTEGER,
-    "lowest_rank" INTEGER,
-    "rank_country" INTEGER,
+    "drops" INTEGER DEFAULT 0 NOT NULL,
+    "current_rank" INTEGER NOT NULL,
+    "highest_rank" INTEGER NOT NULL,
+    "lowest_rank" INTEGER NOT NULL,
+    "rank_country" INTEGER NOT NULL,
     "current_rating" INTEGER NOT NULL,
     "highest_rating" INTEGER NOT NULL,
     "lowest_rating" INTEGER NOT NULL,
-    "losses" INTEGER,
-    "current_streak" INTEGER,
-    "highest_streak" INTEGER,
-    "lowest_streak" INTEGER,
-    "wins" INTEGER,
+    "losses" INTEGER DEFAULT 0 NOT NULL,
+    "current_streak" INTEGER DEFAULT 0 NOT NULL,
+    "highest_streak" INTEGER DEFAULT 0 NOT NULL,
+    "lowest_streak" INTEGER DEFAULT 0 NOT NULL,
+    "wins" INTEGER DEFAULT 0 NOT NULL,
     "datetime_rating_achieved" DATETIME NOT NULL,
     "datetime_updated_at" DATETIME NOT NULL,
-    "datetime_last_match" DATETIME,
+    "datetime_last_match" DATETIME NULL,
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
@@ -240,10 +240,10 @@ CREATE TABLE IF NOT EXISTS "tbl_games" (
     "game_ulid" TEXT(26) PRIMARY KEY NOT NULL,
 	"name_short" TEXT(8) NOT NULL UNIQUE,
 	"name_long" TEXT(255) NOT NULL,
-	"datetime_release" DATETIME,
-	"url_steam" TEXT,
-	"url_microsoft" TEXT,
-	"url_icon" TEXT
+	"datetime_release" DATETIME NULL,
+	"url_steam" TEXT NULL,
+	"url_microsoft" TEXT NULL,
+	"url_icon" TEXT NULL
 );
 CREATE TABLE IF NOT EXISTS "tbl_community_resources" (
     "community_resource_ulid" TEXT(26) NOT NULL PRIMARY KEY,
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS "tbl_community_resources" (
     "url_resource" TEXT NOT NULL UNIQUE,
     "has_https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
     "url_project_source" TEXT NULL,
-    "description" TEXT(255),
+    "description" TEXT(255) NULL,
     "name_aoezone" TEXT(50) NULL,
     "email_address" TEXT NULL,
     "name_discord" TEXT(50) NULL,
@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories_relations" (
 );
 CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics" (
 	"api_key_stat_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-	"key" TEXT CHECK( "key" IN ('req_last_24h', 'req_last_12h', 'req_last_6h', 'last_1h', 'last_30min', 'last_1min') ) NOT NULL DEFAULT 'last_1h',
+	"key" TEXT CHECK( "key" IN ('req_last_24h', 'req_last_12h', 'req_last_6h', 'req_last_1h', 'req_last_30min', 'req_last_1min') ) DEFAULT 'req_last_1h' NOT NULL,
 	"value" INTEGER NOT NULL,
 	UNIQUE ("key", "value")
 );
@@ -317,7 +317,7 @@ CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
 CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
 	"match_ulid_ref" TEXT(26) NOT NULL,
 	"match_setting_ulid_ref" TEXT(26) NOT NULL,
-    "type_of_value" TEXT CHECK( "type_of_value" IN ('text', 'boolean', 'smallint', 'integer', 'numeric', 'datetime') ) NOT NULL DEFAULT 'boolean',
+    "type_of_value" TEXT CHECK( "type_of_value" IN ('text_value', 'boolean_value', 'smallint_value', 'integer_value', 'numeric_value', 'datetime_value') ) DEFAULT 'boolean_value' NOT NULL,
 	FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON UPDATE CASCADE,
 	FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON UPDATE CASCADE,
 	PRIMARY KEY ("match_ulid_ref","match_setting_ulid_ref", "type_of_value")
@@ -335,6 +335,7 @@ CREATE TABLE IF NOT EXISTS "tbl_tournaments_leaderboards_relations" (
 	"tournament_ulid_ref" TEXT(36) NOT NULL,
 	"leaderboard_ulid_ref" TEXT(26) NOT NULL,
     "url_bracket" TEXT NULL,
+    "url_liquipedia" TEXT NULL,
     FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
 	PRIMARY KEY ("tournament_ulid_ref", "leaderboard_ulid_ref")

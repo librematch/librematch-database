@@ -11,12 +11,12 @@ CREATE TABLE "tbl_profiles" (
     "is_hidden" BOOLEAN DEFAULT FALSE NOT NULL, -- this lets us hide e.g. cheaters
     "alias" TEXT(50) NOT NULL,
     "name" TEXT(50) NULL, -- real name from Liquipedia
-    "country_code" TEXT(5), -- same as language string, e.g. es-MX
-    "avatar_hash" TEXT(50), -- Hash to generate Avatar URLs for small, medium, full
-    "datetime_first_seen" DATETIME,
-    "datetime_last_match_fetched" DATETIME,
-    "datetime_last_match" DATETIME, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
-    "datetime_last_refresh" DATETIME,
+    "country_code" TEXT(5) NULL, -- same as language string, e.g. es-MX
+    "avatar_hash" TEXT(50) NULL, -- Hash to generate Avatar URLs for small, medium, full
+    "datetime_first_seen" DATETIME NOT NULL,
+    "datetime_last_match_fetched" DATETIME NULL,
+    "datetime_last_match" DATETIME NULL, -- TODO: Activity indicator needs also game_ulid -> move out to own activity table
+    "datetime_last_refresh" DATETIME NULL,
     "timer_delay_in_sec" INTEGER DEFAULT 600 NOT NULL, -- set by Tournament admins, delays a profiles' match to be shown on our API
     "timer_delay_reset_afer_hours" INTEGER DEFAULT 1 NOT NULL, -- set by Tournament admins, when the timer expires
     "timer_delay_active" INTEGER DEFAULT 0 NOT NULL, -- if the timer is set

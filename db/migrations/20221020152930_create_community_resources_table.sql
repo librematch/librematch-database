@@ -5,7 +5,7 @@ CREATE TABLE "tbl_community_resources" (
     "url_resource" TEXT NOT NULL UNIQUE,
     "has_https_enabled" BOOLEAN DEFAULT TRUE NOT NULL,
     "url_project_source" TEXT NULL,
-    "description" TEXT(255),
+    "description" TEXT(255) NULL,
     "name_aoezone" TEXT(50) NULL,
     "email_address" TEXT NULL,
     "name_discord" TEXT(50) NULL,

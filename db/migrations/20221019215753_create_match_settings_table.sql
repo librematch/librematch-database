@@ -41,3 +41,5 @@ DROP TABLE "tbl_match_settings";
 --     "treaty_length" INTEGER,
 --     "turbo_mode" BOOLEAN,
 --     "victory_condition" SMALLINT,
+--     "map_size" SMALLINT ,
+--     "patch_version" FLOAT,
