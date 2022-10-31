@@ -6,7 +6,7 @@ CREATE TABLE "tbl_users_api_keys_relations" (
 	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
-	UNIQUE ("user_ulid_ref","api_key_ulid_ref", "scope_ulid_ref")
+	PRIMARY KEY ("user_ulid_ref","api_key_ulid_ref", "scope_ulid_ref")
 );
 
 -- migrate:down

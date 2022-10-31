@@ -13,7 +13,7 @@ CREATE TABLE "tbl_matches_players_relations" (
     "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
-    UNIQUE("match_ulid_ref", "profile_ulid_ref")
+    PRIMARY KEY ("match_ulid_ref", "profile_ulid_ref")
 );
 
 -- TODO: when two players play within the same colour (archon mode) they might even chose different civilisations, the civilisation being valid
