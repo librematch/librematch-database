@@ -4,7 +4,7 @@ CREATE TABLE "tbl_leaderboards" (
     "relic_link_leaderboard_id" INTEGER NULL, -- original id from Relic Link API, can be NULL because tournaments and other also have leaderboards
     "game_ulid_ref" TEXT(26) NOT NULL, -- each leaderboard can only exist in one game
     "description" TEXT(50) NOT NULL,
-    CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
     UNIQUE ("leaderboard_ulid", "game_ulid_ref")
 );
 

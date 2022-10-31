@@ -110,7 +110,6 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
     "leaderboard_ulid_ref" TEXT(26) NOT NULL,
-
     "relic_link_match_uuid" TEXT(36) NOT NULL UNIQUE,
     "relic_link_match_id" INTEGER NOT NULL UNIQUE,
     "name" TEXT,
@@ -122,6 +121,7 @@ CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "patch_version" FLOAT,
     "is_private" BOOLEAN DEFAULT FALSE NOT NULL,
     "is_rematch" BOOLEAN DEFAULT FALSE NOT NULL,
+    "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE
 );
 CREATE INDEX "matches_same_settings_IDX" ON "tbl_matches" ("match_setting_ulid_ref");
@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS "tbl_matches_players_relations" (
     "status" SMALLINT NOT NULL, -- 0=draft, 1=ongoing, 2=finished
     "has_won" BOOLEAN,
     "replay_url" TEXT NULL,
+    "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
     FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE RESTRICT ON UPDATE CASCADE,
     UNIQUE("match_ulid_ref", "profile_ulid_ref")
@@ -169,7 +170,7 @@ CREATE TABLE IF NOT EXISTS "cfg_components_settings" (
     "component_ulid_ref" TEXT(26) NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
-    CONSTRAINT "components_settings_component_ulid_ref_fkey" FOREIGN KEY ("component_ulid_ref") REFERENCES "cfg_components" ("component_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY ("component_ulid_ref") REFERENCES "cfg_components" ("component_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     UNIQUE("component_ulid_ref", "key")
 );
 CREATE TABLE IF NOT EXISTS "cfg_components" (
@@ -198,8 +199,9 @@ CREATE TABLE IF NOT EXISTS "tbl_ratings_ledger" (
     "wins" INTEGER,
     "last_match_time" DATETIME,
     "updated_at" DATETIME NOT NULL,
-    CONSTRAINT "ratings_ledger_profile_ulid_ref_fkey" FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT "ratings_ledger_leaderboard_ulid_ref_fkey" FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    "is_archived" BOOLEAN DEFAULT FALSE NOT NULL,
+    FOREIGN KEY ("profile_ulid_ref") REFERENCES "tbl_profiles" ("profile_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY ("profile_ulid_ref", "leaderboard_ulid_ref", "datetime_dt")
 );
 CREATE TABLE IF NOT EXISTS "tbl_leaderboards" (
@@ -207,7 +209,7 @@ CREATE TABLE IF NOT EXISTS "tbl_leaderboards" (
     "relic_link_leaderboard_id" INTEGER NULL, -- original id from Relic Link API, can be NULL because tournaments and other also have leaderboards
     "game_ulid_ref" TEXT(26) NOT NULL, -- each leaderboard can only exist in one game
     "description" TEXT(50) NOT NULL,
-    CONSTRAINT "leaderboards_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid"),
     UNIQUE ("leaderboard_ulid", "game_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_database_dumps" (
@@ -220,7 +222,7 @@ CREATE TABLE IF NOT EXISTS "tbl_database_dumps" (
 	"size" INTEGER NOT NULL,
 	"item_count" INTEGER NOT NULL, -- overall rows contained
 	"storage_url" TEXT NOT NULL,
-    CONSTRAINT "database_dumps_game_ulid_ref_fkey" FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
+    FOREIGN KEY ("game_ulid_ref") REFERENCES "tbl_games" ("game_ulid")
 );
 CREATE INDEX "database_dumps_timestamp_dt_IDX" ON "tbl_database_dumps" ("timestamp_dt");
 CREATE INDEX "database_dumps_uploaded_at_dt_IDX" ON "tbl_database_dumps" ("uploaded_at_dt");
@@ -287,8 +289,8 @@ CREATE INDEX "api_keys_stats_datetime_dt_IDX" ON "tbl_api_keys_statistics" ("dat
 CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics_relations" (
 	"api_key_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_statistic_ulid_ref" TEXT(26) NOT NULL,
-	CONSTRAINT "api_keys_stats_api_key_ulid_ref_FK" FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
-	CONSTRAINT "api_keys_stats_api_key_statistic_ulid_ref_FK" FOREIGN KEY ("api_key_statistic_ulid_ref") REFERENCES "tbl_api_keys_statistics" ("api_key_stat_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("api_key_statistic_ulid_ref") REFERENCES "tbl_api_keys_statistics" ("api_key_stat_ulid") ON UPDATE CASCADE,
 	UNIQUE ("api_key_ulid_ref","api_key_statistic_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_scopes" (
@@ -299,8 +301,8 @@ CREATE TABLE IF NOT EXISTS "tbl_scopes" (
 CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
 	"user_ulid_ref" TEXT(26) NOT NULL,
 	"scope_ulid_ref" TEXT(26) NOT NULL,
-	CONSTRAINT "users_scopes_relations_user_ulid_ref_FK" FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
-	CONSTRAINT "users_scopes_relations_scope_ulid_ref_FK" FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
+	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
 	UNIQUE ("user_ulid_ref","scope_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
