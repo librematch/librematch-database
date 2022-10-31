@@ -6,6 +6,7 @@ CREATE TABLE "tbl_users" (
 	"email_address" TEXT(100) NULL,
 	"discord_id" TEXT(100) NULL,
 	"steam_name" TEXT(100) NULL,
+	"github_name" TEXT(100) NULL,
 	"about_me" TEXT(255) NULL,
 	"rate_limit_per_unit" INTEGER DEFAULT 3,
 	"rate_limit_unit" INTEGER DEFAULT 0, -- 0=minute, 1=hour, 2=day, 3=month
