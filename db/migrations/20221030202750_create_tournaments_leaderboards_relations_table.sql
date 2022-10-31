@@ -5,7 +5,7 @@ CREATE TABLE "tbl_tournaments_leaderboards_relations" (
     "bracket_url" TEXT NULL,
     FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
-	UNIQUE ("tournament_ulid_ref", "leaderboard_ulid_ref")
+	PRIMARY KEY ("tournament_ulid_ref", "leaderboard_ulid_ref")
 );
 
 -- migrate:down

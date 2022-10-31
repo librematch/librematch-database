@@ -103,9 +103,8 @@ CREATE TABLE IF NOT EXISTS "tbl_match_settings" (
     "smallint_value" SMALLINT NULL,
     "integer_value" INTEGER NULL,
     "numeric_value" NUMERIC NULL,
-    "datetime_value" DATETIME NULL
-    -- CONSTRAINT "components_settings_component_ulid_ref_fkey" FOREIGN KEY ("component_ulid_ref") REFERENCES "cfg_components" ("component_ulid") ON DELETE SET NULL ON UPDATE CASCADE,
-    -- UNIQUE("component_ulid_ref", "key")
+    "datetime_value" DATETIME NULL,
+    UNIQUE("key", "text_value", "boolean_value", "smallint_value", "integer_value", "numeric_value", "datetime_value")
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches" (
     "match_ulid" TEXT(26) PRIMARY KEY NOT NULL,
@@ -277,21 +276,17 @@ CREATE TABLE IF NOT EXISTS "tbl_community_resources_categories_relations" (
 );
 CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics" (
 	"api_key_stat_ulid" TEXT(26) PRIMARY KEY NOT NULL,
-	"auth_req_last_24h" INTEGER,
-	"auth_req_last_12h" INTEGER,
-	"auth_req_last_6h" INTEGER,
-	"auth_req_last_1h" INTEGER,
-	"auth_req_last_30min" INTEGER,
-	"auth_req_last_1min" INTEGER,
-	"datetime_dt" DATETIME NOT NULL
+	"key" TEXT CHECK( "key" IN ('req_last_24h', 'req_last_12h', 'req_last_6h', 'last_1h', 'last_30min', 'last_1min') ) NOT NULL DEFAULT 'last_1h',
+	"value" INTEGER NOT NULL,
+	UNIQUE ("key", "value")
 );
-CREATE INDEX "api_keys_stats_datetime_dt_IDX" ON "tbl_api_keys_statistics" ("datetime_dt");
 CREATE TABLE IF NOT EXISTS "tbl_api_keys_statistics_relations" (
 	"api_key_ulid_ref" TEXT(26) NOT NULL,
 	"api_key_statistic_ulid_ref" TEXT(26) NOT NULL,
+	"datetime_dt" DATETIME NOT NULL,
 	FOREIGN KEY ("api_key_ulid_ref") REFERENCES "tbl_api_keys" ("api_key_ulid") ON UPDATE CASCADE,
 	FOREIGN KEY ("api_key_statistic_ulid_ref") REFERENCES "tbl_api_keys_statistics" ("api_key_stat_ulid") ON UPDATE CASCADE,
-	UNIQUE ("api_key_ulid_ref","api_key_statistic_ulid_ref")
+	PRIMARY KEY ("api_key_ulid_ref","api_key_statistic_ulid_ref", "datetime_dt")
 );
 CREATE TABLE IF NOT EXISTS "tbl_scopes" (
     "scope_ulid" TEXT(26) PRIMARY KEY NOT NULL,
@@ -303,7 +298,7 @@ CREATE TABLE IF NOT EXISTS "tbl_users_scopes_relations" (
 	"scope_ulid_ref" TEXT(26) NOT NULL,
 	FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
 	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
-	UNIQUE ("user_ulid_ref","scope_ulid_ref")
+	PRIMARY KEY ("user_ulid_ref","scope_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
 	"match_ulid_ref" TEXT(26) NOT NULL,
@@ -311,7 +306,7 @@ CREATE TABLE IF NOT EXISTS "tbl_matches_match_settings_relations" (
     "type_of_value" TEXT CHECK( "type_of_value" IN ('text', 'boolean', 'smallint', 'integer', 'numeric', 'datetime') ) NOT NULL DEFAULT 'boolean',
 	FOREIGN KEY ("match_ulid_ref") REFERENCES "tbl_matches" ("match_ulid") ON UPDATE CASCADE,
 	FOREIGN KEY ("match_setting_ulid_ref") REFERENCES "tbl_match_settings" ("match_setting_ulid") ON UPDATE CASCADE,
-	UNIQUE ("match_ulid_ref","match_setting_ulid_ref")
+	PRIMARY KEY ("match_ulid_ref","match_setting_ulid_ref", "type_of_value")
 );
 CREATE TABLE IF NOT EXISTS "tbl_users_tournaments_relations" (
 	"user_ulid_ref" TEXT(26) NOT NULL,
@@ -320,15 +315,15 @@ CREATE TABLE IF NOT EXISTS "tbl_users_tournaments_relations" (
 	FOREIGN KEY ("scope_ulid_ref") REFERENCES "tbl_scopes" ("scope_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("user_ulid_ref") REFERENCES "tbl_users" ("user_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
-	UNIQUE ("user_ulid_ref","tournament_ulid_ref", "scope_ulid_ref")
+	PRIMARY KEY ("user_ulid_ref","tournament_ulid_ref", "scope_ulid_ref")
 );
 CREATE TABLE IF NOT EXISTS "tbl_tournaments_leaderboards_relations" (
 	"tournament_ulid_ref" TEXT(36) NOT NULL,
 	"leaderboard_ulid_ref" TEXT(26) NOT NULL,
-    "url_bracket" TEXT NULL,
+    "bracket_url" TEXT NULL,
     FOREIGN KEY ("leaderboard_ulid_ref") REFERENCES "tbl_leaderboards" ("leaderboard_ulid") ON UPDATE CASCADE,
     FOREIGN KEY ("tournament_ulid_ref") REFERENCES "tbl_tournaments" ("tournament_ulid") ON UPDATE CASCADE,
-	UNIQUE ("tournament_ulid_ref", "leaderboard_ulid_ref")
+	PRIMARY KEY ("tournament_ulid_ref", "leaderboard_ulid_ref")
 );
 -- Dbmate schema migrations
 INSERT INTO "db_schema_migrations" (version) VALUES
